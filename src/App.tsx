@@ -1,33 +1,37 @@
 
-import React from "react";
-
-// Versão ultra-simplificada para debug
+// Versão super básica sem nenhuma dependência externa
 function App() {
-  console.log('🚀 App ultra-simplificado iniciado');
+  console.log('🚀 App básico iniciado');
   
-  try {
-    return (
-      <div className="min-h-screen bg-white">
-        <div className="p-8 text-center">
-          <h1 className="text-2xl font-bold text-black">Sistema Funcionando</h1>
-          <p className="text-gray-600 mt-4">App carregado sem erros</p>
-          <div className="mt-6 p-4 bg-green-100 border border-green-300 rounded">
-            <p className="text-green-800">✅ Versão debug - sem providers ou routers</p>
-          </div>
+  return (
+    <div style={{ 
+      minHeight: '100vh', 
+      display: 'flex', 
+      alignItems: 'center', 
+      justifyContent: 'center',
+      backgroundColor: '#f0f0f0',
+      fontFamily: 'Arial, sans-serif'
+    }}>
+      <div style={{ textAlign: 'center', padding: '20px' }}>
+        <h1 style={{ color: '#333', fontSize: '24px', marginBottom: '10px' }}>
+          Sistema Funcionando!
+        </h1>
+        <p style={{ color: '#666', fontSize: '16px' }}>
+          Versão ultra-básica sem dependências
+        </p>
+        <div style={{ 
+          marginTop: '20px', 
+          padding: '10px', 
+          backgroundColor: '#e8f5e8', 
+          border: '1px solid #4caf50',
+          borderRadius: '4px',
+          color: '#2e7d32'
+        }}>
+          ✅ React funcionando perfeitamente
         </div>
       </div>
-    );
-  } catch (error) {
-    console.error('❌ Erro crítico no App:', error);
-    return (
-      <div className="min-h-screen bg-red-50 flex items-center justify-center">
-        <div className="text-center p-8">
-          <h1 className="text-xl font-bold text-red-600">Erro Fatal</h1>
-          <p className="text-red-500">Falha na aplicação</p>
-        </div>
-      </div>
-    );
-  }
+    </div>
+  );
 }
 
 export default App;
