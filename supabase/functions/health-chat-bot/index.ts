@@ -268,120 +268,9 @@ Responda de forma amigável explicando que a imagem não parece ser de comida.`;
       response = 'Olá! Sou a Sofia, sua assistente de saúde. Como posso te ajudar hoje?';
     }
 
-    // 🔍 ANÁLISE EMOCIONAL AUTOMÁTICA
-    let emotionalAnalysis = null;
-    
-    if (GOOGLE_AI_API_KEY) {
-      try {
-        console.log('🧠 Iniciando análise emocional automática...');
-        
-        const emotionalAnalysisPrompt = `
-Analise a mensagem do usuário e extraia informações emocionais e físicas.
-
-MENSAGEM: "${message}"
-
-Responda em formato JSON com os seguintes campos:
-{
-  "sentiment_score": -1.0 a 1.0 (negativo a positivo),
-  "emotions_detected": ["emoção1", "emoção2"],
-  "pain_level": 0-10 (se mencionado, null se não),
-  "stress_level": 0-10 (se mencionado, null se não),
-  "energy_level": 0-10 (se mencionado, null se não),
-  "mood_keywords": ["palavra1", "palavra2"],
-  "physical_symptoms": ["sintoma1", "sintoma2"],
-  "emotional_topics": ["tópico1", "tópico2"],
-  "concerns_mentioned": ["preocupação1", "preocupação2"],
-  "goals_mentioned": ["objetivo1", "objetivo2"],
-  "achievements_mentioned": ["conquista1", "conquista2"],
-  "trauma_indicators": ["indicador1", "indicador2"],
-  "body_locations": ["local1", "local2"],
-  "intensity_level": 0-10,
-  "eating_impact": "texto sobre impacto na alimentação",
-  "triggers_mentioned": ["gatilho1", "gatilho2"]
-}
-
-Seja preciso e objetivo. Se não houver informação sobre um campo, use null ou array vazio.`;
-
-        const emotionalResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GOOGLE_AI_API_KEY}`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            contents: [{
-              parts: [{ text: emotionalAnalysisPrompt }]
-            }],
-            generationConfig: {
-              temperature: 0.3,
-              maxOutputTokens: 1024,
-              topP: 0.8,
-              topK: 40
-            }
-          })
-        });
-
-        const emotionalData = await emotionalResponse.json();
-        
-        if (emotionalData.candidates && emotionalData.candidates[0]) {
-          const analysisText = emotionalData.candidates[0].content.parts[0].text;
-          console.log('🧠 Análise emocional:', analysisText);
-          
-          try {
-            // Extrair JSON da resposta
-            const jsonMatch = analysisText.match(/\{[\s\S]*\}/);
-            if (jsonMatch) {
-              emotionalAnalysis = JSON.parse(jsonMatch[0]);
-              console.log('✅ Análise emocional processada com sucesso');
-            }
-          } catch (parseError) {
-            console.error('❌ Erro ao parsear análise emocional:', parseError);
-            emotionalAnalysis = {
-              sentiment_score: 0,
-              emotions_detected: [],
-              pain_level: null,
-              stress_level: null,
-              energy_level: null,
-              mood_keywords: [],
-              physical_symptoms: [],
-              emotional_topics: [],
-              concerns_mentioned: [],
-              goals_mentioned: [],
-              achievements_mentioned: [],
-              trauma_indicators: [],
-              body_locations: [],
-              intensity_level: null,
-              eating_impact: null,
-              triggers_mentioned: []
-            };
-          }
-        }
-      } catch (error) {
-        console.error('❌ Erro na análise emocional:', error);
-        emotionalAnalysis = {
-          sentiment_score: 0,
-          emotions_detected: [],
-          pain_level: null,
-          stress_level: null,
-          energy_level: null,
-          mood_keywords: [],
-          physical_symptoms: [],
-          emotional_topics: [],
-          concerns_mentioned: [],
-          goals_mentioned: [],
-          achievements_mentioned: [],
-          trauma_indicators: [],
-          body_locations: [],
-          intensity_level: null,
-          eating_impact: null,
-          triggers_mentioned: []
-        };
-      }
-    }
-
     // Salvar conversa no banco
-    let conversationId = null;
     try {
-      const { data: conversationData, error: conversationError } = await supabase
+      await supabase
         .from('chat_conversations')
         .insert({
           user_id: userId,
@@ -390,64 +279,12 @@ Seja preciso e objetivo. Se não houver informação sobre um campo, use null ou
           character: character,
           has_image: !!imageUrl,
           image_url: imageUrl,
-          food_analysis: foodAnalysis,
-          sentiment_score: emotionalAnalysis?.sentiment_score || 0,
-          emotion_tags: emotionalAnalysis?.emotions_detected || [],
-          topic_tags: emotionalAnalysis?.emotional_topics || [],
-          pain_level: emotionalAnalysis?.pain_level,
-          stress_level: emotionalAnalysis?.stress_level,
-          energy_level: emotionalAnalysis?.energy_level,
-          ai_analysis: {
-            emotional_analysis: emotionalAnalysis,
-            food_analysis: foodAnalysis,
-            user_summary: userSummary
-          }
-        })
-        .select('id')
-        .single();
+          food_analysis: foodAnalysis
+        });
       
-      if (conversationError) {
-        console.error('❌ Erro ao salvar conversa:', conversationError);
-      } else {
-        conversationId = conversationData.id;
-        console.log('💾 Conversa salva no banco de dados');
-      }
+      console.log('💾 Conversa salva no banco de dados');
     } catch (error) {
       console.error('❌ Erro ao salvar conversa:', error);
-    }
-
-    // Salvar análise emocional separadamente
-    if (emotionalAnalysis && conversationId) {
-      try {
-        await supabase
-          .from('chat_emotional_analysis')
-          .insert({
-            user_id: userId,
-            conversation_id: conversationId,
-            sentiment_score: emotionalAnalysis.sentiment_score,
-            emotions_detected: emotionalAnalysis.emotions_detected,
-            pain_level: emotionalAnalysis.pain_level,
-            stress_level: emotionalAnalysis.stress_level,
-            energy_level: emotionalAnalysis.energy_level,
-            mood_keywords: emotionalAnalysis.mood_keywords,
-            physical_symptoms: emotionalAnalysis.physical_symptoms,
-            emotional_topics: emotionalAnalysis.emotional_topics,
-            concerns_mentioned: emotionalAnalysis.concerns_mentioned,
-            goals_mentioned: emotionalAnalysis.goals_mentioned,
-            achievements_mentioned: emotionalAnalysis.achievements_mentioned,
-            analysis_metadata: {
-              trauma_indicators: emotionalAnalysis.trauma_indicators,
-              body_locations: emotionalAnalysis.body_locations,
-              intensity_level: emotionalAnalysis.intensity_level,
-              eating_impact: emotionalAnalysis.eating_impact,
-              triggers_mentioned: emotionalAnalysis.triggers_mentioned
-            }
-          });
-        
-        console.log('🧠 Análise emocional salva separadamente');
-      } catch (error) {
-        console.error('❌ Erro ao salvar análise emocional:', error);
-      }
     }
 
     return new Response(
@@ -455,7 +292,6 @@ Seja preciso e objetivo. Se não houver informação sobre um campo, use null ou
         response,
         character,
         foodAnalysis,
-        emotionalAnalysis,
         userSummary
       }),
       {
