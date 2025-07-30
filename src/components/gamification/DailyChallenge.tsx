@@ -441,7 +441,10 @@ export const DailyChallenge: React.FC<DailyChallengeProps> = ({
                     size="sm" 
                     variant="outline" 
                     className="flex-1"
-                    onClick={handleViewDetails}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate(`/challenges/${challenge.id}`);
+                    }}
                   >
                     <Eye className="h-4 w-4 mr-2" />
                     Ver Progresso
