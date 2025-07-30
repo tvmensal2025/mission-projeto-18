@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste Básico</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        .container {
+            text-align: center;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .success {
+            color: #28a745;
+            margin-top: 15px;
+            padding: 10px;
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Teste Básico - HTML Puro</h1>
+        <p>Se você está vendo isso, o servidor está funcionando.</p>
+        <div class="success">
+            ✅ HTML puro carregando perfeitamente
+        </div>
+        <p><small>Tempo: <span id="time"></span></small></p>
+    </div>
+
+    <script>
+        // Script básico para mostrar que JavaScript funciona
+        document.getElementById('time').textContent = new Date().toLocaleTimeString();
+        console.log('✅ HTML puro funcionando - ' + new Date().toLocaleTimeString());
+        
+        // Testar se há algum erro de JavaScript global
+        window.addEventListener('error', function(e) {
+            console.error('❌ Erro JavaScript detectado:', e);
+            document.body.innerHTML = '<div style="color: red; text-align: center; padding: 50px;"><h1>Erro JavaScript Detectado</h1><p>' + e.message + '</p></div>';
+        });
+    </script>
+</body>
+</html>
