@@ -108,6 +108,13 @@ const queryClient = new QueryClient({
     queries: {
       retry: 1,
       refetchOnWindowFocus: false,
+      // Desabilitar WebSockets para evitar sharedWebSockets
+      staleTime: Infinity,
+      gcTime: Infinity,
+    },
+    mutations: {
+      // Desabilitar otimizações de rede
+      retry: false,
     },
   },
 });
