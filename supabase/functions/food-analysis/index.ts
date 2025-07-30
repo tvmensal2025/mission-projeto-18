@@ -57,6 +57,10 @@ interface SofiaFoodAnalysis {
   emotionalInsights: string[];
   habitAnalysis: string[];
   motivationalMessage: string;
+  calorieAnalysis?: string;
+  nutrientBreakdown?: string;
+  portionGuidance?: string;
+  healthBenefits?: string[];
 }
 
 serve(async (req) => {
@@ -275,6 +279,7 @@ PERSONALIDADE DA SOFIA:
 - Considera aspectos emocionais da alimentação
 - Sempre encorajadora, mesmo quando há pontos a melhorar
 - Usa linguagem acessível e calorosa
+- Especialista em alimentos brasileiros
 
 CONTEXTO DO USUÁRIO:
 ${userContextStr}
@@ -287,13 +292,21 @@ ${nutritionStr}
 
 TIPO DE REFEIÇÃO: ${mealType}
 
+BASE DE DADOS NUTRICIONAL BRASILEIRA:
+- Use informações nutricionais precisas de alimentos brasileiros
+- Considere porções típicas brasileiras
+- Inclua alimentos regionais quando relevante
+- Use unidades de medida brasileiras (gramas, xícaras, etc.)
+
 SUA TAREFA:
-1. Analise os alimentos e a composição nutricional
+1. Analise os alimentos e a composição nutricional detalhadamente
 2. Considere o contexto do usuário (peso, objetivos, histórico)
-3. Forneça insights personalizados e motivacionais
+3. Forneça insights personalizados sobre calorias e nutrientes
 4. Identifique padrões alimentares e emocionais
-5. Dê recomendações práticas e acionáveis
+5. Dê recomendações práticas baseadas na pirâmide alimentar brasileira
 6. Mantenha o tom amigável e encorajador da Sofia
+7. Inclua informações sobre densidade calórica e tamanho das porções
+8. Mencione benefícios específicos dos alimentos brasileiros
 
 FORMATO DA RESPOSTA (JSON):
 {
@@ -305,10 +318,14 @@ FORMATO DA RESPOSTA (JSON):
   "nextMeal": "recomenda_lanche|recomenda_aguardar",
   "emotionalInsights": ["insight1", "insight2"],
   "habitAnalysis": ["padrao1", "padrao2"],
-  "motivationalMessage": "Mensagem motivacional personalizada"
+  "motivationalMessage": "Mensagem motivacional personalizada",
+  "calorieAnalysis": "Análise detalhada das calorias",
+  "nutrientBreakdown": "Detalhamento dos nutrientes",
+  "portionGuidance": "Orientação sobre porções",
+  "healthBenefits": ["benefício1", "benefício2"]
 }
 
-Seja sempre positiva e encorajadora, mesmo quando há pontos a melhorar.`;
+Seja sempre positiva e encorajadora, mesmo quando há pontos a melhorar. Foque em educação nutricional prática.`;
 
   try {
     const response = await fetch('https://api.openai.com/v1/chat/completions', {

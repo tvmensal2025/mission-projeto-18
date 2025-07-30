@@ -98,17 +98,30 @@ serve(async (req) => {
         const imageAnalysisPrompt = `
 Analise esta imagem e determine se contém comida/alimentos.
 
-Se for comida, forneça:
-1. Lista de alimentos identificados
-2. Tipo de refeição (café da manhã, almoço, jantar, lanche)
-3. Avaliação nutricional (0-100)
-4. Calorias estimadas
-5. Pontos positivos da refeição
-6. Sugestões de melhoria
+Se for comida, forneça uma análise detalhada em formato JSON:
+
+{
+  "is_food": true,
+  "foods_detected": ["alimento1", "alimento2"],
+  "meal_type": "café da manhã|almoço|jantar|lanche",
+  "nutritional_assessment": "score de 0-100",
+  "estimated_calories": "calorias estimadas",
+  "positive_points": ["ponto1", "ponto2"],
+  "suggestions": ["sugestão1", "sugestão2"],
+  "nutrients": {
+    "protein": "estimativa em gramas",
+    "carbs": "estimativa em gramas", 
+    "fat": "estimativa em gramas",
+    "fiber": "estimativa em gramas"
+  },
+  "health_benefits": ["benefício1", "benefício2"],
+  "calorie_density": "baixa|média|alta",
+  "portion_size": "pequena|média|grande"
+}
 
 Se não for comida, responda apenas: "Não é comida"
 
-Responda em português brasileiro de forma clara e objetiva.`;
+Use a base de dados nutricional brasileira para estimativas precisas.`;
 
         const imageAnalysisResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GOOGLE_AI_API_KEY}`, {
           method: 'POST',
@@ -154,7 +167,11 @@ Responda em português brasileiro de forma clara e objetiva.`;
               nutritional_assessment: extractNutritionalScore(analysisText),
               estimated_calories: extractCalories(analysisText),
               positive_points: extractPositivePoints(analysisText),
-              suggestions: extractSuggestions(analysisText)
+              suggestions: extractSuggestions(analysisText),
+              nutrients: extractNutrients(analysisText),
+              health_benefits: extractHealthBenefits(analysisText),
+              calorie_density: extractCalorieDensity(analysisText),
+              portion_size: extractPortionSize(analysisText)
             };
           }
         }
@@ -216,12 +233,23 @@ MENSAGEM ATUAL: "${message}"`;
 ANÁLISE DE COMIDA DETECTADA:
 - Alimentos: ${foodAnalysis.foods_detected?.join(', ')}
 - Tipo de refeição: ${foodAnalysis.meal_type}
-- Avaliação: ${foodAnalysis.nutritional_assessment}
+- Avaliação nutricional: ${foodAnalysis.nutritional_assessment}/100
 - Calorias estimadas: ${foodAnalysis.estimated_calories}
+- Densidade calórica: ${foodAnalysis.calorie_density || 'N/A'}
+- Tamanho da porção: ${foodAnalysis.portion_size || 'N/A'}
+- Nutrientes: ${foodAnalysis.nutrients ? `Proteína: ${foodAnalysis.nutrients.protein}g, Carboidratos: ${foodAnalysis.nutrients.carbs}g, Gorduras: ${foodAnalysis.nutrients.fat}g, Fibras: ${foodAnalysis.nutrients.fiber}g` : 'N/A'}
+- Benefícios para saúde: ${foodAnalysis.health_benefits?.join(', ') || 'N/A'}
 - Pontos positivos: ${foodAnalysis.positive_points?.join(', ')}
 - Sugestões: ${foodAnalysis.suggestions?.join(', ')}
 
-Responda como Sofia analisando a comida enviada de forma personalizada e motivacional.`;
+Como Sofia, analise esta refeição considerando:
+1. Balanceamento nutricional (proteínas, carboidratos, gorduras)
+2. Densidade calórica e tamanho da porção
+3. Benefícios para saúde dos alimentos
+4. Sugestões práticas para melhorar a refeição
+5. Mensagem motivacional personalizada
+
+Responda de forma carinhosa e educativa, sempre incentivando escolhas saudáveis.`;
         } else if (isImageAnalysis && foodAnalysis && !foodAnalysis.is_food) {
           contextPrompt += `
 
@@ -478,31 +506,173 @@ Seja preciso e objetivo. Se não houver informação sobre um campo, use null ou
 
 // Funções auxiliares para extrair dados da análise de comida
 function extractFoods(text: string): string[] {
+  // Tentar extrair do JSON primeiro
+  try {
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    if (jsonMatch) {
+      const jsonData = JSON.parse(jsonMatch[0]);
+      if (jsonData.foods_detected && Array.isArray(jsonData.foods_detected)) {
+        return jsonData.foods_detected;
+      }
+    }
+  } catch (e) {
+    // Fallback para regex
+  }
+  
   const foodMatch = text.match(/alimentos?[:\s]+([^.\n]+)/i);
   return foodMatch ? foodMatch[1].split(',').map(f => f.trim()) : [];
 }
 
 function extractMealType(text: string): string {
+  try {
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    if (jsonMatch) {
+      const jsonData = JSON.parse(jsonMatch[0]);
+      if (jsonData.meal_type) {
+        return jsonData.meal_type;
+      }
+    }
+  } catch (e) {
+    // Fallback para regex
+  }
+  
   const mealMatch = text.match(/tipo de refeição[:\s]+([^.\n]+)/i);
   return mealMatch ? mealMatch[1].trim() : 'Não identificado';
 }
 
 function extractNutritionalScore(text: string): string {
+  try {
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    if (jsonMatch) {
+      const jsonData = JSON.parse(jsonMatch[0]);
+      if (jsonData.nutritional_assessment) {
+        return jsonData.nutritional_assessment;
+      }
+    }
+  } catch (e) {
+    // Fallback para regex
+  }
+  
   const scoreMatch = text.match(/avaliação nutricional[:\s]+(\d+)/i);
   return scoreMatch ? scoreMatch[1] : 'N/A';
 }
 
 function extractCalories(text: string): string {
+  try {
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    if (jsonMatch) {
+      const jsonData = JSON.parse(jsonMatch[0]);
+      if (jsonData.estimated_calories) {
+        return jsonData.estimated_calories;
+      }
+    }
+  } catch (e) {
+    // Fallback para regex
+  }
+  
   const calMatch = text.match(/calorias estimadas[:\s]+([^.\n]+)/i);
   return calMatch ? calMatch[1].trim() : 'N/A';
 }
 
 function extractPositivePoints(text: string): string[] {
+  try {
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    if (jsonMatch) {
+      const jsonData = JSON.parse(jsonMatch[0]);
+      if (jsonData.positive_points && Array.isArray(jsonData.positive_points)) {
+        return jsonData.positive_points;
+      }
+    }
+  } catch (e) {
+    // Fallback para regex
+  }
+  
   const pointsMatch = text.match(/pontos positivos[:\s]+([^.\n]+)/i);
   return pointsMatch ? pointsMatch[1].split(',').map(p => p.trim()) : [];
 }
 
 function extractSuggestions(text: string): string[] {
+  try {
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    if (jsonMatch) {
+      const jsonData = JSON.parse(jsonMatch[0]);
+      if (jsonData.suggestions && Array.isArray(jsonData.suggestions)) {
+        return jsonData.suggestions;
+      }
+    }
+  } catch (e) {
+    // Fallback para regex
+  }
+  
   const suggMatch = text.match(/sugestões[:\s]+([^.\n]+)/i);
   return suggMatch ? suggMatch[1].split(',').map(s => s.trim()) : [];
+}
+
+function extractNutrients(text: string): any {
+  try {
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    if (jsonMatch) {
+      const jsonData = JSON.parse(jsonMatch[0]);
+      if (jsonData.nutrients) {
+        return jsonData.nutrients;
+      }
+    }
+  } catch (e) {
+    // Fallback para regex
+  }
+  
+  return {
+    protein: 'N/A',
+    carbs: 'N/A',
+    fat: 'N/A',
+    fiber: 'N/A'
+  };
+}
+
+function extractHealthBenefits(text: string): string[] {
+  try {
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    if (jsonMatch) {
+      const jsonData = JSON.parse(jsonMatch[0]);
+      if (jsonData.health_benefits && Array.isArray(jsonData.health_benefits)) {
+        return jsonData.health_benefits;
+      }
+    }
+  } catch (e) {
+    // Fallback para regex
+  }
+  
+  return [];
+}
+
+function extractCalorieDensity(text: string): string {
+  try {
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    if (jsonMatch) {
+      const jsonData = JSON.parse(jsonMatch[0]);
+      if (jsonData.calorie_density) {
+        return jsonData.calorie_density;
+      }
+    }
+  } catch (e) {
+    // Fallback para regex
+  }
+  
+  return 'N/A';
+}
+
+function extractPortionSize(text: string): string {
+  try {
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    if (jsonMatch) {
+      const jsonData = JSON.parse(jsonMatch[0]);
+      if (jsonData.portion_size) {
+        return jsonData.portion_size;
+      }
+    }
+  } catch (e) {
+    // Fallback para regex
+  }
+  
+  return 'N/A';
 }
