@@ -151,7 +151,7 @@ export const DailyChallenge: React.FC<DailyChallengeProps> = ({
   };
 
   const handleViewDetails = () => {
-    navigate(`/challenges/${challenge.id}`);
+    navigate(`/challenge/${challenge.id}`);
   };
 
   const handleLike = () => {
@@ -162,7 +162,7 @@ export const DailyChallenge: React.FC<DailyChallengeProps> = ({
     navigator.share?.({
       title: challenge.title,
       text: challenge.description,
-      url: window.location.origin + `/challenges/${challenge.id}`
+      url: window.location.origin + `/challenge/${challenge.id}`
     });
   };
 
@@ -443,7 +443,7 @@ export const DailyChallenge: React.FC<DailyChallengeProps> = ({
                     className="flex-1"
                     onClick={(e) => {
                       e.stopPropagation();
-                      navigate(`/challenges/${challenge.id}`);
+                      navigate(`/challenge/${challenge.id}`);
                     }}
                   >
                     <Eye className="h-4 w-4 mr-2" />
