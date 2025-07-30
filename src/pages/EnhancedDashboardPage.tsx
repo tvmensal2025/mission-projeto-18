@@ -101,7 +101,11 @@ const EnhancedDashboardPage = () => {
 
   try {
     // Tentar renderizar a versão completa
-    const GamifiedDashboard = React.lazy(() => import("@/components/gamification/GamifiedDashboard"));
+    const GamifiedDashboard = React.lazy(() => 
+      import("@/components/gamification/GamifiedDashboard").then(module => ({ 
+        default: module.GamifiedDashboard 
+      }))
+    );
     
     return (
       <div className="min-h-screen bg-background">
