@@ -166,7 +166,7 @@ export default function ChallengeManagement({ user }: ChallengeManagementProps) 
         category: challenge.category || 'exercicio',
         difficulty: challenge.difficulty || 'medio',
         duration_days: challenge.duration_days || 7,
-        points_reward: challenge.points || 100,
+        points_reward: challenge.xp_reward || 100,
         badge_icon: getCategoryIcon(challenge.category || 'exercicio'),
         badge_name: challenge.title,
         instructions: challenge.description,
@@ -220,7 +220,7 @@ export default function ChallengeManagement({ user }: ChallengeManagementProps) 
           category: formData.category,
           difficulty: formData.difficulty,
           duration_days: formData.duration_days,
-          points: formData.points_reward,
+          xp_reward: formData.points_reward,
           is_active: true
         }])
         .select()

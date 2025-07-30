@@ -155,7 +155,6 @@ export type Database = {
           duration_days: number | null
           id: string
           is_active: boolean | null
-          points: number | null
           target_value: number | null
           title: string
           updated_at: string | null
@@ -170,7 +169,6 @@ export type Database = {
           duration_days?: number | null
           id?: string
           is_active?: boolean | null
-          points?: number | null
           target_value?: number | null
           title: string
           updated_at?: string | null
@@ -185,7 +183,6 @@ export type Database = {
           duration_days?: number | null
           id?: string
           is_active?: boolean | null
-          points?: number | null
           target_value?: number | null
           title?: string
           updated_at?: string | null
@@ -601,6 +598,7 @@ export type Database = {
           description: string | null
           icon: string | null
           id: string
+          is_active: boolean | null
           name: string
           updated_at: string | null
         }
@@ -610,6 +608,7 @@ export type Database = {
           description?: string | null
           icon?: string | null
           id?: string
+          is_active?: boolean | null
           name: string
           updated_at?: string | null
         }
@@ -619,6 +618,7 @@ export type Database = {
           description?: string | null
           icon?: string | null
           id?: string
+          is_active?: boolean | null
           name?: string
           updated_at?: string | null
         }
@@ -651,6 +651,39 @@ export type Database = {
           notes?: string | null
           previous_value?: number | null
           user_id?: string
+        }
+        Relationships: []
+      }
+      google_fit_data: {
+        Row: {
+          created_at: string | null
+          data_type: string
+          id: string
+          recorded_at: string | null
+          synced_at: string | null
+          unit: string | null
+          user_id: string | null
+          value: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          data_type: string
+          id?: string
+          recorded_at?: string | null
+          synced_at?: string | null
+          unit?: string | null
+          user_id?: string | null
+          value?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          data_type?: string
+          id?: string
+          recorded_at?: string | null
+          synced_at?: string | null
+          unit?: string | null
+          user_id?: string | null
+          value?: number | null
         }
         Relationships: []
       }
@@ -908,6 +941,7 @@ export type Database = {
       preventive_health_analyses: {
         Row: {
           analysis_data: Json | null
+          analysis_date: string | null
           analysis_type: string
           created_at: string | null
           id: string
@@ -918,6 +952,7 @@ export type Database = {
         }
         Insert: {
           analysis_data?: Json | null
+          analysis_date?: string | null
           analysis_type: string
           created_at?: string | null
           id?: string
@@ -928,6 +963,7 @@ export type Database = {
         }
         Update: {
           analysis_data?: Json | null
+          analysis_date?: string | null
           analysis_type?: string
           created_at?: string | null
           id?: string
@@ -947,6 +983,7 @@ export type Database = {
           created_at: string
           email: string | null
           full_name: string | null
+          gender: string | null
           id: string
           phone: string | null
           role: string | null
@@ -961,6 +998,7 @@ export type Database = {
           created_at?: string
           email?: string | null
           full_name?: string | null
+          gender?: string | null
           id?: string
           phone?: string | null
           role?: string | null
@@ -975,6 +1013,7 @@ export type Database = {
           created_at?: string
           email?: string | null
           full_name?: string | null
+          gender?: string | null
           id?: string
           phone?: string | null
           role?: string | null
