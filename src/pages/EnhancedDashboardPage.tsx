@@ -100,27 +100,24 @@ const EnhancedDashboardPage = () => {
   console.log('✅ Renderizando dashboard para usuário:', user.email);
 
   try {
-    // Tentar renderizar a versão completa
-    const GamifiedDashboard = React.lazy(() => 
-      import("@/components/gamification/GamifiedDashboard").then(module => ({ 
-        default: module.GamifiedDashboard 
-      }))
-    );
+    console.log('🔄 Tentando renderizar dashboard simples primeiro...');
     
+    // Versão temporária sem lazy loading para debug
     return (
       <div className="min-h-screen bg-background">
-        <React.Suspense 
-          fallback={
-            <div className="min-h-screen bg-background flex items-center justify-center">
-              <div className="text-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-                <p className="text-muted-foreground">Carregando componentes...</p>
-              </div>
+        <div className="container mx-auto px-4 py-8">
+          <div className="bg-card p-6 rounded-lg border">
+            <h1 className="text-2xl font-bold mb-4">Dashboard Gamificado</h1>
+            <p className="text-muted-foreground mb-4">
+              Olá {user.email}! Dashboard está carregando...
+            </p>
+            <div className="bg-blue-50 border border-blue-200 rounded-md p-4">
+              <p className="text-blue-800 text-sm">
+                🚀 Dashboard simplificado funcionando. Pronto para adicionar componentes.
+              </p>
             </div>
-          }
-        >
-          <GamifiedDashboard />
-        </React.Suspense>
+          </div>
+        </div>
       </div>
     );
   } catch (componentError) {

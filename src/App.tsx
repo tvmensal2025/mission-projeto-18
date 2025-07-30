@@ -56,6 +56,8 @@ const queryClient = new QueryClient({
 });
 
 function App() {
+  console.log('🚀 App component started');
+  
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
