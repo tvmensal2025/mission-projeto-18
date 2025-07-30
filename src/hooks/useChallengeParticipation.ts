@@ -50,9 +50,10 @@ export const useChallengeParticipation = () => {
         .from('challenges')
         .select('target_value')
         .eq('id', challengeId)
-        .single();
+        .maybeSingle();
 
       if (challengeError) throw challengeError;
+      if (!challenge) throw new Error('Desafio não encontrado');
 
       // Criar participação
       const { data, error } = await supabase
