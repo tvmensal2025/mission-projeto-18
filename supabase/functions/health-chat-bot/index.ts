@@ -26,7 +26,7 @@ serve(async (req) => {
 
     // Configurar chaves de API
     const GOOGLE_AI_API_KEY = Deno.env.get('GOOGLE_AI_API_KEY');
-    console.log('🔑 Google AI:', GOOGLE_AI_API_KEY ? '✅ Configurada' : '❌ Não encontrada');
+    console.log('🔑 Google AI (Gemini):', GOOGLE_AI_API_KEY ? '✅ Configurada' : '❌ Não encontrada');
 
     // 🔍 Buscar dados do usuário
     console.log('👤 Buscando dados do usuário...');
@@ -90,35 +90,27 @@ serve(async (req) => {
     let isImageAnalysis = false;
 
     if (imageUrl && GOOGLE_AI_API_KEY) {
-      console.log('🖼️ Iniciando análise de imagem...');
+      console.log('🖼️ Iniciando análise de imagem com Gemini Flash...');
       isImageAnalysis = true;
       
       try {
-        // Prompt especializado para análise de comida
+        // Prompt especializado para análise de comida com Gemini Flash
         const imageAnalysisPrompt = `
 Analise esta imagem e determine se contém comida/alimentos.
 
-Se contém comida, forneça uma análise nutricional detalhada no formato JSON:
-{
-  "is_food": true,
-  "confidence": 0.9,
-  "foods_detected": ["arroz", "feijão", "salada"],
-  "meal_type": "almoço",
-  "nutritional_assessment": "Refeição balanceada com carboidratos, proteínas e vegetais",
-  "positive_points": ["Boa variedade", "Inclui vegetais"],
-  "suggestions": ["Adicionar mais proteína", "Reduzir sal"],
-  "estimated_calories": 650,
-  "health_tips": "Mastigue devagar para melhor digestão"
-}
+Se for comida, forneça:
+1. Lista de alimentos identificados
+2. Tipo de refeição (café da manhã, almoço, jantar, lanche)
+3. Avaliação nutricional (0-100)
+4. Calorias estimadas
+5. Pontos positivos da refeição
+6. Sugestões de melhoria
 
-Se NÃO contém comida, retorne:
-{
-  "is_food": false,
-  "confidence": 0.95,
-  "detected_content": "descrição do que vê"
-}`;
+Se não for comida, responda apenas: "Não é comida"
 
-        const aiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=${GOOGLE_AI_API_KEY}`, {
+Responda em português brasileiro de forma clara e objetiva.`;
+
+        const imageAnalysisResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GOOGLE_AI_API_KEY}`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -127,42 +119,48 @@ Se NÃO contém comida, retorne:
             contents: [{
               parts: [
                 { text: imageAnalysisPrompt },
-                { 
+                {
                   inline_data: {
                     mime_type: "image/jpeg",
-                    data: await fetch(imageUrl).then(r => r.arrayBuffer()).then(buffer => 
-                      btoa(String.fromCharCode(...new Uint8Array(buffer)))
-                    )
+                    data: imageUrl.split(',')[1] || imageUrl
                   }
                 }
               ]
             }],
             generationConfig: {
-              temperature: 0.3,
-              maxOutputTokens: 1000,
+              temperature: 0.6,
+              maxOutputTokens: 1024,
+              topP: 0.8,
+              topK: 40
             }
           })
         });
 
-        if (aiResponse.ok) {
-          const aiData = await aiResponse.json();
-          const aiText = aiData.candidates?.[0]?.content?.parts?.[0]?.text;
+        const imageAnalysisData = await imageAnalysisResponse.json();
+        
+        if (imageAnalysisData.candidates && imageAnalysisData.candidates[0]) {
+          const analysisText = imageAnalysisData.candidates[0].content.parts[0].text;
+          console.log('🍽️ Análise de comida:', analysisText);
           
-          if (aiText) {
-            try {
-              // Extrair JSON da resposta
-              const jsonMatch = aiText.match(/\{[\s\S]*\}/);
-              if (jsonMatch) {
-                foodAnalysis = JSON.parse(jsonMatch[0]);
-                console.log('🍽️ Análise de comida:', foodAnalysis);
-              }
-            } catch (parseError) {
-              console.log('⚠️ Erro ao parsear análise de comida:', parseError.message);
-            }
+          // Parse da análise de comida
+          if (analysisText.includes('Não é comida')) {
+            foodAnalysis = { is_food: false };
+          } else {
+            foodAnalysis = {
+              is_food: true,
+              analysis: analysisText,
+              foods_detected: extractFoods(analysisText),
+              meal_type: extractMealType(analysisText),
+              nutritional_assessment: extractNutritionalScore(analysisText),
+              estimated_calories: extractCalories(analysisText),
+              positive_points: extractPositivePoints(analysisText),
+              suggestions: extractSuggestions(analysisText)
+            };
           }
         }
       } catch (error) {
-        console.log('⚠️ Erro na análise de imagem:', error.message);
+        console.error('❌ Erro na análise de imagem:', error);
+        foodAnalysis = { is_food: false, error: error.message };
       }
     }
 
@@ -175,11 +173,11 @@ Se NÃO contém comida, retorne:
       ? 'Dr. Vital, médico especialista em saúde e bem-estar'
       : 'Sofia, assistente virtual amigável e coach de saúde';
 
-    // 🤖 Gerar resposta personalizada
+    // 🤖 Gerar resposta personalizada com Gemini Flash
     let response = '';
 
     if (GOOGLE_AI_API_KEY) {
-      console.log(`🤖 Gerando resposta personalizada como ${character}...`);
+      console.log(`🤖 Gerando resposta personalizada como ${character} com Gemini Flash...`);
       
       try {
         // Construir contexto rico
@@ -227,28 +225,14 @@ Responda como Sofia analisando a comida enviada de forma personalizada e motivac
         } else if (isImageAnalysis && foodAnalysis && !foodAnalysis.is_food) {
           contextPrompt += `
 
-IMAGEM ANALISADA (não é comida):
-- Conteúdo detectado: ${foodAnalysis.detected_content}
+ANÁLISE DE IMAGEM:
+A imagem enviada não contém comida/alimentos.
 
-Responda explicando que viu a imagem mas que não é comida, e pergunte como pode ajudar.`;
+Responda de forma amigável explicando que a imagem não parece ser de comida.`;
         }
 
-        contextPrompt += `
-
-INSTRUÇÕES:
-- Seja calorosa, motivacional e empática
-- Use emojis apropriados (máximo 3 por mensagem)
-- Personalize com o nome do usuário
-- Considere o histórico da conversa
-- Dê dicas práticas de saúde
-- Se analisou comida, seja específica na análise nutricional
-- Mantenha o tom da Sofia sempre positivo
-- RESPOSTA CONCISA: máximo 2-3 frases, seja objetiva e direta
-- Foque no essencial, sem explicações longas
-
-RESPOSTA DA SOFIA:`;
-
-        const aiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GOOGLE_AI_API_KEY}`, {
+        // Chamar Gemini Flash
+        const geminiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GOOGLE_AI_API_KEY}`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -258,55 +242,103 @@ RESPOSTA DA SOFIA:`;
               parts: [{ text: contextPrompt }]
             }],
             generationConfig: {
-              temperature: 0.8,
-              maxOutputTokens: 300,
+              temperature: isFriday ? 0.6 : 0.8,
+              maxOutputTokens: isFriday ? 4096 : 2048,
+              topP: 0.8,
+              topK: 40
             }
           })
         });
 
-        if (aiResponse.ok) {
-          const aiData = await aiResponse.json();
-          const aiText = aiData.candidates?.[0]?.content?.parts?.[0]?.text;
-          
-          if (aiText) {
-            response = aiText;
-            console.log('✅ Resposta personalizada gerada');
-          } else {
-            throw new Error('Resposta vazia da IA');
-          }
+        const geminiData = await geminiResponse.json();
+        
+        if (geminiData.candidates && geminiData.candidates[0]) {
+          response = geminiData.candidates[0].content.parts[0].text;
+          console.log('✅ Resposta do Gemini Flash gerada com sucesso');
         } else {
-          throw new Error(`Erro na API: ${aiResponse.status}`);
+          throw new Error('Resposta vazia do Gemini Flash');
         }
+
       } catch (error) {
-        console.log('⚠️ Erro na IA:', error.message);
-        response = `💜 Olá ${userSummary.name}! Como posso te ajudar hoje? (IA temporariamente indisponível)`;
+        console.error('❌ Erro ao gerar resposta com Gemini Flash:', error);
+        response = 'Desculpe, tive um problema técnico. Pode tentar novamente?';
       }
     } else {
-      response = `💜 Olá ${userSummary.name}! Como posso te ajudar hoje?`;
+      console.log('⚠️ Google AI API não configurada, usando resposta padrão');
+      response = 'Olá! Sou a Sofia, sua assistente de saúde. Como posso te ajudar hoje?';
     }
 
-    const finalResponse = {
-      response: response,
-      character: character,
-      day: new Date().getDay(),
-      isFriday: isFriday,
-      foodAnalysis: foodAnalysis,
-      userSummary: userSummary
-    };
+    // Salvar conversa no banco
+    try {
+      await supabase
+        .from('chat_conversations')
+        .insert({
+          user_id: userId,
+          message: message,
+          response: response,
+          character: character,
+          has_image: !!imageUrl,
+          image_url: imageUrl,
+          food_analysis: foodAnalysis
+        });
+      
+      console.log('💾 Conversa salva no banco de dados');
+    } catch (error) {
+      console.error('❌ Erro ao salvar conversa:', error);
+    }
 
-    console.log('✅ Resposta final enviada');
-
-    return new Response(JSON.stringify(finalResponse), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
+    return new Response(
+      JSON.stringify({
+        response,
+        character,
+        foodAnalysis,
+        userSummary
+      }),
+      {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 200,
+      }
+    );
 
   } catch (error) {
-    console.error('❌ Erro na função:', error);
-    return new Response(JSON.stringify({ 
-      error: error.message || 'Erro interno do servidor' 
-    }), {
-      status: 500,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
+    console.error('💥 Erro na Edge Function:', error);
+    return new Response(
+      JSON.stringify({ error: error.message }),
+      {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 500,
+      }
+    );
   }
 });
+
+// Funções auxiliares para extrair dados da análise de comida
+function extractFoods(text: string): string[] {
+  const foodMatch = text.match(/alimentos?[:\s]+([^.\n]+)/i);
+  return foodMatch ? foodMatch[1].split(',').map(f => f.trim()) : [];
+}
+
+function extractMealType(text: string): string {
+  const mealMatch = text.match(/tipo de refeição[:\s]+([^.\n]+)/i);
+  return mealMatch ? mealMatch[1].trim() : 'Não identificado';
+}
+
+function extractNutritionalScore(text: string): string {
+  const scoreMatch = text.match(/avaliação nutricional[:\s]+(\d+)/i);
+  return scoreMatch ? scoreMatch[1] : 'N/A';
+}
+
+function extractCalories(text: string): string {
+  const calMatch = text.match(/calorias estimadas[:\s]+([^.\n]+)/i);
+  return calMatch ? calMatch[1].trim() : 'N/A';
+}
+
+function extractPositivePoints(text: string): string[] {
+  const pointsMatch = text.match(/pontos positivos[:\s]+([^.\n]+)/i);
+  return pointsMatch ? pointsMatch[1].split(',').map(p => p.trim()) : [];
+}
+
+function extractSuggestions(text: string): string[] {
+  const suggMatch = text.match(/sugestões[:\s]+([^.\n]+)/i);
+  return suggMatch ? suggMatch[1].split(',').map(s => s.trim()) : [];
+}
