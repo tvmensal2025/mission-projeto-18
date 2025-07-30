@@ -166,16 +166,39 @@ Se NÃO contém comida, retorne:
       }
     }
 
+    // 🤖 Determinar personagem baseado no dia da semana
+    const currentDay = new Date().getDay();
+    const isFriday = currentDay === 5;
+    
+    let character = isFriday ? 'Dr. Vital' : 'Sofia';
+    let characterDescription = isFriday 
+      ? 'Dr. Vital, médico especialista em saúde e bem-estar'
+      : 'Sofia, assistente virtual amigável e coach de saúde';
+
     // 🤖 Gerar resposta personalizada
     let response = '';
 
     if (GOOGLE_AI_API_KEY) {
-      console.log('🤖 Gerando resposta personalizada...');
+      console.log(`🤖 Gerando resposta personalizada como ${character}...`);
       
       try {
         // Construir contexto rico
         let contextPrompt = `
-Você é a Sofia, assistente virtual de saúde amigável e motivacional do ${userSummary.name}.
+Você é ${characterDescription}.
+
+${isFriday ? `
+SEXTA-FEIRA - DR. VITAL:
+- Você é um médico experiente e atencioso
+- Foque em análises médicas e resumos semanais
+- Use linguagem profissional mas calorosa
+- Emoji recomendado: 👨‍⚕️
+` : `
+SOFIA - ASSISTENTE DE SAÚDE:
+- Você é uma coach de saúde amigável e motivacional
+- Foque em apoio emocional e incentivo
+- Use linguagem carinhosa e empática
+- Emoji recomendado: 💜
+`}
 
 DADOS DO USUÁRIO:
 - Nome: ${userSummary.name}
@@ -264,8 +287,9 @@ RESPOSTA DA SOFIA:`;
 
     const finalResponse = {
       response: response,
-      character: 'Sof.ia',
+      character: character,
       day: new Date().getDay(),
+      isFriday: isFriday,
       foodAnalysis: foodAnalysis,
       userSummary: userSummary
     };
