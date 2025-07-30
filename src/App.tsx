@@ -18,6 +18,7 @@ import AutoLoginPage from "./pages/AutoLoginPage";
 import DashboardPage from "./pages/DashboardPage";
 import CompleteDashboardPage from "./pages/CompleteDashboardPage";
 import EnhancedDashboardPage from "./pages/EnhancedDashboardPage";
+import EnhancedDashboardPageTest from "./pages/EnhancedDashboardPageTest";
 import AdminPage from "./pages/AdminPage";
 import { CoursePlatform } from "./components/CoursePlatform";
 import MissionSystem from "./components/MissionSystem";
@@ -136,7 +137,7 @@ const App: React.FC = () => {
             
             {/* Dashboard - standalone without layout */}
             <Route path="/dashboard" element={<CompleteDashboardPage />} />
-            <Route path="/enhanced-dashboard" element={<EnhancedDashboardPage />} />
+            <Route path="/enhanced-dashboard" element={<EnhancedDashboardPageTest />} />
             <Route path="/dashboard/progress" element={<MyProgress />} />
             
             {/* Admin - standalone without layout */}
