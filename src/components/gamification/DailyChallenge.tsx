@@ -102,7 +102,7 @@ export const DailyChallenge: React.FC<DailyChallengeProps> = ({
   const [isExpired, setIsExpired] = useState(false);
   const [liked, setLiked] = useState(false);
   const navigate = useNavigate();
-  const { participate, isParticipating: isParticipatingFn, getProgress, updateProgress } = useChallengeParticipation();
+  const { participate, isParticipating: isParticipatingFn, getProgress, updateProgress, isParticipatingInChallenge } = useChallengeParticipation();
 
   const progress = challenge.target_value > 0 ? (challenge.current / challenge.target_value) * 100 : 0;
   const StatusIcon = getStatusIcon(challenge.completed, progress);
@@ -135,7 +135,9 @@ export const DailyChallenge: React.FC<DailyChallengeProps> = ({
   };
 
   const handleStart = () => {
-    participate(challenge.id);
+    if (!isParticipatingInChallenge && !isParticipatingFn(challenge.id)) {
+      participate(challenge.id);
+    }
   };
 
   const handleViewDetails = () => {
@@ -434,6 +436,7 @@ export const DailyChallenge: React.FC<DailyChallengeProps> = ({
               <Button 
                 size="sm" 
                 className="flex-1 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600" 
+                disabled={isParticipatingInChallenge || isParticipatingFn(challenge.id)}
                 onClick={(e) => {
                   e.stopPropagation();
                   handleStart();
