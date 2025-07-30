@@ -33,6 +33,12 @@ export const useChallengeParticipation = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('Usuário não autenticado');
 
+      // Verificar se já está participando
+      const existingParticipation = participations?.find(p => p.challenge_id === challengeId);
+      if (existingParticipation) {
+        throw new Error('Você já está participando deste desafio');
+      }
+
       // Buscar dados do desafio
       const { data: challenge, error: challengeError } = await supabase
         .from('challenges')
@@ -43,10 +49,10 @@ export const useChallengeParticipation = () => {
       if (challengeError) throw challengeError;
       if (!challenge) throw new Error('Desafio não encontrado');
 
-      // UPSERT: Insert ou ignore se já existe
+      // Inserir nova participação
       const { data, error } = await supabase
         .from('challenge_participations')
-        .upsert({
+        .insert({
           user_id: user.id,
           challenge_id: challengeId,
           target_value: challenge.target_value || 1,
@@ -55,15 +61,12 @@ export const useChallengeParticipation = () => {
           best_streak: 0,
           is_completed: false,
           started_at: new Date().toISOString()
-        }, {
-          onConflict: 'user_id,challenge_id',
-          ignoreDuplicates: false
         })
         .select()
         .single();
 
       if (error) {
-        // Se ainda assim der erro, verificar se é porque já existe
+        // Se der erro de constraint única, significa que já está participando
         if (error.code === '23505') {
           throw new Error('Você já está participando deste desafio');
         }
@@ -78,10 +81,6 @@ export const useChallengeParticipation = () => {
       });
       // Invalidar queries para atualizar a UI imediatamente
       queryClient.invalidateQueries({ queryKey: ['challenge-participations'] });
-      queryClient.setQueryData(['challenge-participations'], (oldData: any) => {
-        if (!oldData) return [data];
-        return [...oldData, data];
-      });
     },
     onError: (error: Error) => {
       toast({
