@@ -347,11 +347,48 @@
 }
 
 /* Hide Lovable elements */
-a[href*="lovable.dev"], iframe[src*="lovable.dev"], div[style*="Edit with Lovable"], .lovable-badge {
+a[href*="lovable.dev"], 
+iframe[src*="lovable.dev"], 
+div[style*="Edit with Lovable"], 
+.lovable-badge,
+[data-lovable],
+[class*="lovable"],
+[data-testid*="lovable"],
+iframe[src*="lovableproject.com"],
+script[src*="lovable"],
+link[href*="lovable"] {
   display: none !important;
-  opacity: 0 !important;
   visibility: hidden !important;
+  opacity: 0 !important;
   pointer-events: none !important;
-  position: absolute !important;
-  z-index: -9999 !important;
+}
+
+/* Disable WebSocket connections to Lovable */
+* {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Prevent any Lovable-related scripts from loading */
+script[src*="lovable"] {
+  display: none !important;
+}
+
+/* Hide any Lovable overlays or popups */
+div[style*="lovable"],
+div[class*="lovable"],
+div[id*="lovable"] {
+  display: none !important;
+}
+
+/* Disable any Lovable WebSocket connections */
+* {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
