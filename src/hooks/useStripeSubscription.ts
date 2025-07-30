@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
-import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
+import { safeInvokeEdgeFunction } from '@/utils/edgeFunctions';
 
 export interface SubscriptionStatus {
   subscribed: boolean;
@@ -19,15 +19,24 @@ export function useStripeSubscription() {
   });
   const { toast } = useToast();
 
-  // Check subscription status
+  // Check subscription status with error handling
   const checkSubscription = useCallback(async () => {
     try {
       setStatus(prev => ({ ...prev, isLoading: true, error: undefined }));
       
-      const { data, error } = await supabase.functions.invoke('check-subscription');
+      const response = await safeInvokeEdgeFunction('check-subscription');
       
-      if (error) throw error;
-      
+      if (!response.success) {
+        console.error('Subscription check failed:', response.error);
+        setStatus({
+          subscribed: false,
+          isLoading: false,
+          error: response.error
+        });
+        return;
+      }
+
+      const data = response.data;
       setStatus({
         subscribed: data.subscribed || false,
         subscription_tier: data.subscription_tier,
@@ -44,20 +53,21 @@ export function useStripeSubscription() {
     }
   }, []);
 
-  // Create checkout session
+  // Create checkout session with error handling
   const createCheckout = useCallback(async (planId: string) => {
     try {
       setStatus(prev => ({ ...prev, isLoading: true }));
       
-      const { data, error } = await supabase.functions.invoke('create-checkout', {
+      const response = await safeInvokeEdgeFunction('create-checkout', {
         body: { planId },
       });
       
-      if (error) throw error;
+      if (!response.success) {
+        throw new Error(response.error || 'Failed to create checkout');
+      }
       
-      if (data.url) {
-        // Open Stripe checkout in a new tab
-        window.open(data.url, '_blank');
+      if (response.data?.url) {
+        window.open(response.data.url, '_blank');
       }
     } catch (error) {
       console.error('Error creating checkout:', error);
@@ -71,16 +81,17 @@ export function useStripeSubscription() {
     }
   }, [toast]);
 
-  // Manage subscription (customer portal)
+  // Manage subscription (customer portal) with error handling
   const manageSubscription = useCallback(async () => {
     try {
-      const { data, error } = await supabase.functions.invoke('customer-portal');
+      const response = await safeInvokeEdgeFunction('customer-portal');
       
-      if (error) throw error;
+      if (!response.success) {
+        throw new Error(response.error || 'Failed to open portal');
+      }
       
-      if (data.url) {
-        // Open customer portal in a new tab
-        window.open(data.url, '_blank');
+      if (response.data?.url) {
+        window.open(response.data.url, '_blank');
       }
     } catch (error) {
       console.error('Error opening customer portal:', error);

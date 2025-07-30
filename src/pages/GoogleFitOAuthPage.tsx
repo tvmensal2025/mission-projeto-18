@@ -42,7 +42,7 @@ const GoogleFitOAuthPage = () => {
       const isLocalhost = window.location.hostname === 'localhost';
       const redirectUri = isLocalhost 
         ? 'http://localhost:3000/google-fit-callback'
-        : 'https://eb451b44-5d36-4bf7-8628-481a619af74a.lovableproject.com/google-fit-callback';
+        : window.location.origin + '/google-fit-callback';
       
       const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?` +
         `client_id=${clientId}&` +
