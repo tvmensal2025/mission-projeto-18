@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 
 export interface SubscriptionStatus {
@@ -11,6 +12,7 @@ export interface SubscriptionStatus {
 }
 
 export function useStripeSubscription() {
+  const { user } = useAuth();
   const [status, setStatus] = useState<SubscriptionStatus>({
     subscribed: false,
     isLoading: true,
@@ -90,36 +92,16 @@ export function useStripeSubscription() {
     }
   }, [toast]);
 
-  // Check subscription on component mount and auth changes
   useEffect(() => {
-    const checkAuth = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        checkSubscription();
-      } else {
-        setStatus({
-          subscribed: false,
-          isLoading: false,
-        });
-      }
-    };
-
-    checkAuth();
-
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'SIGNED_IN' && session?.user) {
-        checkSubscription();
-      } else if (event === 'SIGNED_OUT') {
-        setStatus({
-          subscribed: false,
-          isLoading: false,
-        });
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  }, [checkSubscription]);
+    if (user) {
+      checkSubscription();
+    } else {
+      setStatus({
+        subscribed: false,
+        isLoading: false,
+      });
+    }
+  }, [user, checkSubscription]);
 
   return {
     status,
