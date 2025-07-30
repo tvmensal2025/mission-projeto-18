@@ -71,12 +71,17 @@ export const useChallengeParticipation = () => {
       }
       return data;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       toast({
         title: "🎯 Desafio Iniciado!",
         description: "Você agora está participando do desafio!",
       });
+      // Invalidar queries para atualizar a UI imediatamente
       queryClient.invalidateQueries({ queryKey: ['challenge-participations'] });
+      queryClient.setQueryData(['challenge-participations'], (oldData: any) => {
+        if (!oldData) return [data];
+        return [...oldData, data];
+      });
     },
     onError: (error: Error) => {
       toast({

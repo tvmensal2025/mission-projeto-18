@@ -101,6 +101,7 @@ export const DailyChallenge: React.FC<DailyChallengeProps> = ({
   const [timeLeft, setTimeLeft] = useState<string>('');
   const [isExpired, setIsExpired] = useState(false);
   const [liked, setLiked] = useState(false);
+  const [hasClickedParticipate, setHasClickedParticipate] = useState(false);
   const navigate = useNavigate();
   const { participate, isParticipating: isParticipatingFn, getProgress, updateProgress, isParticipatingInChallenge } = useChallengeParticipation();
 
@@ -110,6 +111,13 @@ export const DailyChallenge: React.FC<DailyChallengeProps> = ({
   const isUrgent = new Date(challenge.expiresAt).getTime() - new Date().getTime() < 2 * 60 * 60 * 1000; // 2 hours
   const isUserParticipating = isParticipatingFn(challenge.id);
   const userProgress = getProgress(challenge.id);
+
+  // Reset do clique quando o estado mudar
+  React.useEffect(() => {
+    if (isUserParticipating) {
+      setHasClickedParticipate(false);
+    }
+  }, [isUserParticipating]);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -135,7 +143,9 @@ export const DailyChallenge: React.FC<DailyChallengeProps> = ({
   };
 
   const handleStart = () => {
-    if (!isParticipatingInChallenge && !isParticipatingFn(challenge.id)) {
+    // Só permite participar se ainda não estiver participando e não tiver clicado recentemente
+    if (!isUserParticipating && !isParticipatingInChallenge && !hasClickedParticipate) {
+      setHasClickedParticipate(true);
       participate(challenge.id);
     }
   };
@@ -424,27 +434,65 @@ export const DailyChallenge: React.FC<DailyChallengeProps> = ({
             </div>
           ) : (
             <div className="flex gap-2 w-full">
-              <Button 
-                size="sm" 
-                variant="outline" 
-                className="flex-1"
-                onClick={handleViewDetails}
-              >
-                <Eye className="h-4 w-4 mr-2" />
-                Ver Detalhes
-              </Button>
-              <Button 
-                size="sm" 
-                className="flex-1 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600" 
-                disabled={isParticipatingInChallenge || isParticipatingFn(challenge.id)}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleStart();
-                }}
-              >
-                <Target className="h-4 w-4 mr-2" />
-                Participar
-              </Button>
+              {/* Mostrar "Ver Detalhes" se já estiver participando */}
+              {isUserParticipating ? (
+                <div className="flex gap-2 w-full">
+                  <Button 
+                    size="sm" 
+                    variant="outline" 
+                    className="flex-1"
+                    onClick={handleViewDetails}
+                  >
+                    <Eye className="h-4 w-4 mr-2" />
+                    Ver Progresso
+                  </Button>
+                  <UpdateChallengeProgressModal 
+                    challenge={{
+                      id: challenge.id,
+                      title: challenge.title,
+                      target_value: challenge.target_value,
+                      current: challenge.current,
+                      unit: challenge.unit,
+                      difficulty: challenge.difficulty,
+                      xp_reward: challenge.xp_reward,
+                      type: challenge.type
+                    }}
+                    onUpdate={() => {}}
+                  >
+                    <Button 
+                      size="sm" 
+                      className="flex-1"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      Atualizar
+                    </Button>
+                  </UpdateChallengeProgressModal>
+                </div>
+              ) : (
+                <div className="flex gap-2 w-full">
+                  <Button 
+                    size="sm" 
+                    variant="outline" 
+                    className="flex-1"
+                    onClick={handleViewDetails}
+                  >
+                    <Eye className="h-4 w-4 mr-2" />
+                    Ver Detalhes
+                  </Button>
+                  <Button 
+                    size="sm" 
+                    className="flex-1 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600" 
+                    disabled={isParticipatingInChallenge || hasClickedParticipate}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleStart();
+                    }}
+                  >
+                    <Target className="h-4 w-4 mr-2" />
+                    {isParticipatingInChallenge || hasClickedParticipate ? 'Participando...' : 'Participar'}
+                  </Button>
+                </div>
+              )}
             </div>
           )}
         </div>
