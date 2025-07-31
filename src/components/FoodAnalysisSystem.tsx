@@ -393,9 +393,9 @@ export const FoodAnalysisSystem: React.FC = () => {
                   {/* Resultados da busca */}
                   {showSearchResults && searchResults.length > 0 && (
                     <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-y-auto">
-                      {searchResults.map((food) => (
-                        <div
-                          key={food.id}
+                                        {searchResults.map((food) => (
+                    <div
+                      key={`search-food-${food.id}`}
                           className="px-3 py-2 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0"
                           onClick={() => {
                             addFoodItem(food.name);
@@ -423,9 +423,9 @@ export const FoodAnalysisSystem: React.FC = () => {
               <div>
                 <label className="text-sm font-medium">Categorias</label>
                 <div className="grid grid-cols-2 gap-2 mt-2">
-                  {foodCategories.map(category => (
-                    <Button
-                      key={category.name}
+                                  {foodCategories.map(category => (
+                  <Button
+                    key={`category-${category.name}`}
                       variant="outline"
                       size="sm"
                       onClick={() => addFoodItem(category.name.toLowerCase())}
@@ -478,8 +478,8 @@ export const FoodAnalysisSystem: React.FC = () => {
             <CardContent>
               <ScrollArea className="h-64">
                 <div className="space-y-2">
-                  {foodItems.map(item => (
-                    <div key={item.id} className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                                {foodItems.map(item => (
+                <div key={`food-item-${item.id}`} className="flex items-center justify-between p-2 bg-gray-50 rounded">
                       <div className="flex items-center space-x-2">
                         <Badge variant="secondary">{item.category}</Badge>
                         <span className="font-medium">{item.name}</span>
@@ -655,8 +655,8 @@ export const FoodAnalysisSystem: React.FC = () => {
                         Benefícios para Saúde
                       </h4>
                       <ul className="space-y-1 text-sm">
-                        {sofiaAnalysis.healthBenefits.map((benefit, index) => (
-                          <li key={index} className="flex items-start">
+                                        {sofiaAnalysis.healthBenefits.map((benefit, index) => (
+                  <li key={`health-benefit-${index}`} className="flex items-start">
                             <span className="text-pink-600 mr-2">•</span>
                             {benefit}
                           </li>
@@ -673,8 +673,8 @@ export const FoodAnalysisSystem: React.FC = () => {
                         Recomendações
                       </h4>
                       <ul className="space-y-1 text-sm">
-                        {sofiaAnalysis.recommendations.map((rec, index) => (
-                          <li key={index} className="flex items-start">
+                                        {sofiaAnalysis.recommendations.map((rec, index) => (
+                  <li key={`recommendation-${index}`} className="flex items-start">
                             <span className="text-green-600 mr-2">•</span>
                             {rec}
                           </li>
@@ -691,8 +691,8 @@ export const FoodAnalysisSystem: React.FC = () => {
                         Insights Emocionais
                       </h4>
                       <ul className="space-y-1 text-sm">
-                        {sofiaAnalysis.emotionalInsights.map((insight, index) => (
-                          <li key={index} className="flex items-start">
+                                        {sofiaAnalysis.emotionalInsights.map((insight, index) => (
+                  <li key={`emotional-insight-${index}`} className="flex items-start">
                             <span className="text-purple-600 mr-2">•</span>
                             {insight}
                           </li>
@@ -709,8 +709,8 @@ export const FoodAnalysisSystem: React.FC = () => {
                         Análise de Hábitos
                       </h4>
                       <ul className="space-y-1 text-sm">
-                        {sofiaAnalysis.habitAnalysis.map((habit, index) => (
-                          <li key={index} className="flex items-start">
+                                        {sofiaAnalysis.habitAnalysis.map((habit, index) => (
+                  <li key={`habit-analysis-${index}`} className="flex items-start">
                             <span className="text-blue-600 mr-2">•</span>
                             {habit}
                           </li>

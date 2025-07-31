@@ -915,8 +915,11 @@ const [formData, setFormData] = useState({
       .select('id, full_name')
       .order('full_name');
 
-    if (error) throw error;
-    setProfiles((data || []).map(p => ({ user_id: p.id, full_name: p.full_name })));
+    if (!error && data) {
+      setProfiles(data.map(p => ({ user_id: p.id, full_name: p.full_name })));
+    } else if (error) {
+      console.error('Erro ao carregar profiles:', error);
+    }
   };
 
   const createSession = async () => {
@@ -941,8 +944,17 @@ const [formData, setFormData] = useState({
       }
 
       const sessionData = {
-        ...formData,
+        title: formData.title,
+        description: formData.description,
+        type: formData.type,
+        difficulty: formData.difficulty,
+        estimated_time: formData.estimated_time,
         content: parsedContent,
+        target_saboteurs: formData.target_saboteurs || [],
+        materials_needed: formData.materials_needed || [],
+        follow_up_questions: formData.follow_up_questions || [],
+        is_active: true,
+        tools_data: {},
         created_by: user?.id
       };
 
@@ -1398,9 +1410,11 @@ const [formData, setFormData] = useState({
         difficulty: template.difficulty,
         estimated_time: template.estimated_time,
         content: template.content,
-        target_saboteurs: template.target_saboteurs,
-        materials_needed: template.materials_needed,
-        follow_up_questions: template.follow_up_questions,
+        target_saboteurs: template.target_saboteurs || [],
+        materials_needed: template.materials_needed || [],
+        follow_up_questions: template.follow_up_questions || [],
+        is_active: true,
+        tools_data: {},
         created_by: user?.id
       };
 
@@ -1459,14 +1473,14 @@ const [formData, setFormData] = useState({
     }
   };
 
-  const filteredSessions = sessions.filter(session => {
+  const filteredSessions = (sessions || []).filter(session => {
     const matchesSearch = session.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          session.description?.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesDifficulty = filterDifficulty === 'all' || session.difficulty === filterDifficulty;
     return matchesSearch && matchesDifficulty;
   });
 
-  const filteredUserSessions = userSessions.filter(userSession => {
+  const filteredUserSessions = (userSessions || []).filter(userSession => {
     return filterStatus === 'all' || userSession.status === filterStatus;
   });
 
@@ -2047,7 +2061,7 @@ const [formData, setFormData] = useState({
                 <CardContent>
                   <div className="flex justify-between items-center">
                     <div className="text-sm text-muted-foreground">
-                      Tipo: {session.type} • Sabotadores: {session.target_saboteurs.length}
+                      Tipo: {session.type} • Sabotadores: {session.target_saboteurs?.length || 0}
                     </div>
                     <div className="flex gap-2">
                       <Dialog>

@@ -44,8 +44,8 @@ export const DailyMissionsFinal: React.FC<DailyMissionsFinalProps> = ({ user }) 
         return (
           <div className="space-y-4">
             <div className="space-y-3">
-              {question.scale?.labels?.map((label, index) => (
-                <div key={index} className="flex items-center gap-3">
+                          {question.scale?.labels?.map((label, index) => (
+              <div key={`${question.id}-label-${index}`} className="flex items-center gap-3">
                   <Button
                     variant={answers[question.id] === index + 1 ? "default" : "outline"}
                     className={`w-16 h-16 p-0 question-button mobile-text-lg ${
@@ -71,9 +71,9 @@ export const DailyMissionsFinal: React.FC<DailyMissionsFinalProps> = ({ user }) 
         return (
           <div className="space-y-4">
             <div className="flex justify-center gap-3">
-              {[1, 2, 3, 4, 5].map((star) => (
-                <Button
-                  key={star}
+                      {[1, 2, 3, 4, 5].map((star) => (
+          <Button
+            key={`${question.id}-star-${star}`}
                   variant={answers[question.id] === star ? "default" : "outline"}
                   className={`w-16 h-16 p-0 question-button ${
                     answers[question.id] === star ? 'question-button-purple' : 'question-button-outline'
@@ -99,9 +99,9 @@ export const DailyMissionsFinal: React.FC<DailyMissionsFinalProps> = ({ user }) 
       case 'multiple_choice':
         return (
           <div className="space-y-3">
-            {question.options?.map((option, index) => (
-              <Button
-                key={index}
+                    {question.options?.map((option, index) => (
+          <Button
+            key={`${question.id}-option-${index}`}
                 variant={answers[question.id] === option ? "default" : "outline"}
                 className={`w-full justify-start text-left question-button ${
                   answers[question.id] === option ? 'question-button-purple' : 'question-button-outline'

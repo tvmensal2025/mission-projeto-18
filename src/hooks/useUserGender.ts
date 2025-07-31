@@ -18,17 +18,16 @@ export const useUserGender = (user: User | null) => {
     try {
       setLoading(true);
       
-      // Tentar buscar da tabela profiles primeiro
+      // Buscar da tabela profiles primeiro (agora tem coluna gender)
       const { data: profileData, error: profileError } = await supabase
         .from('profiles')
         .select('gender')
         .eq('user_id', user.id)
         .single();
 
-      if (!profileError && profileData) {
-        // Gender column doesn't exist in profiles table, skip this check
-        // setGender(profileData.gender as string);
-        // return;
+      if (!profileError && profileData?.gender) {
+        setGender(profileData.gender);
+        return;
       }
 
       // Se não encontrou na tabela profiles, tentar user_physical_data

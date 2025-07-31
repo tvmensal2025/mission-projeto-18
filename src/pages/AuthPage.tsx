@@ -68,25 +68,62 @@ const AuthPage = () => {
         return;
       }
 
-      // Verificar se o usuário tem role de admin após login bem-sucedido
+      // Verificar role do usuário após login bem-sucedido
       if (data.user) {
         try {
-          // Usar RPC para verificar se é admin (evita problemas de tipos)
-          // Check if user is admin by checking profiles table
-          const { data: profileData } = await supabase
-            .from('profiles')
+          // Verificar role na tabela user_roles (sistema robusto)
+          const { data: roleData } = await supabase
+            .from('user_roles')
             .select('role')
             .eq('user_id', data.user.id)
+            .eq('is_active', true)
+            .order('assigned_at', { ascending: false })
+            .limit(1)
             .single();
-          
-          const isAdmin = profileData?.role === 'admin';
 
-          if (isAdmin) {
+          let userRole = 'user';
+          
+          if (roleData?.role) {
+            userRole = roleData.role;
+          } else {
+            // Fallback: verificar na tabela profiles
+            const { data: profileData } = await supabase
+              .from('profiles')
+              .select('role')
+              .eq('user_id', data.user.id)
+              .single();
+            
+            if (profileData?.role && ['test', 'user', 'admin'].includes(profileData.role)) {
+              userRole = profileData.role;
+            } else {
+              // Fallback: verificar por email (compatibilidade)
+              const adminEmails = [
+                'admin@institutodossonhos.com.br',
+                'teste@institutodossonhos.com',
+                'contato@rafael-dias.com'
+              ];
+              
+              if (adminEmails.includes(data.user.email || '') || 
+                  data.user.email?.includes('admin') ||
+                  data.user.user_metadata?.role === 'admin') {
+                userRole = 'admin';
+              }
+            }
+          }
+
+          // Navegação baseada no role
+          if (userRole === 'admin') {
             toast({
               title: "Acesso administrativo concedido",
               description: "Bem-vindo, administrador",
             });
             navigate("/admin");
+          } else if (userRole === 'test') {
+            toast({
+              title: "Modo de teste ativado",
+              description: "Bem-vindo ao ambiente de testes",
+            });
+            navigate("/dashboard");
           } else {
             toast({
               title: "Login realizado!",
@@ -199,19 +236,21 @@ const AuthPage = () => {
         // O perfil é criado automaticamente pelo trigger
         if (data.user) {
 
-          // Criar dados físicos automaticamente
-          const { error: physicalError } = await supabase
-            .from('user_physical_data')
-            .insert({
-              user_id: data.user.id,
+          // Atualizar perfil com dados físicos
+          const { error: profileError } = await supabase
+            .from('profiles')
+            .update({
               altura_cm: height,
-              idade: age,
-              sexo: signupData.gender === 'male' ? 'masculino' : 'feminino',
-              nivel_atividade: 'moderado'
-            });
+              data_nascimento: signupData.birthDate,
+              gender: signupData.gender,
+              estado: signupData.state,
+              city: signupData.city,
+              updated_at: new Date().toISOString()
+            })
+            .eq('user_id', data.user.id);
 
-          if (physicalError) {
-            console.error('Erro ao criar dados físicos:', physicalError);
+          if (profileError) {
+            console.error('Erro ao atualizar perfil:', profileError);
           }
 
           toast({

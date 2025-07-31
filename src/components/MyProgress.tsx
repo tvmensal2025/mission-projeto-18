@@ -4,9 +4,11 @@ import { Button } from './ui/button';
 import { useGoogleFitData } from '../hooks/useGoogleFitData';
 import { motion } from 'framer-motion';
 import { Skeleton } from './ui/skeleton';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { GoogleFitCharts } from './progress/GoogleFitCharts';
 import { OverviewWithGoogleFit } from './progress/OverviewWithGoogleFit';
-import { ArrowLeft, Activity, Target, TrendingUp } from 'lucide-react';
+import { TrackingDashboard } from './tracking/TrackingDashboard';
+import { ArrowLeft, Activity, Target, TrendingUp, Droplets, Moon, Heart } from 'lucide-react';
 
 const MyProgress: React.FC = () => {
   // Usar dados centralizados do hook
@@ -72,84 +74,106 @@ const MyProgress: React.FC = () => {
           <div>
             <h1 className="text-3xl font-bold flex items-center gap-3">
               <Activity className="w-8 h-8 text-primary" />
-              Meu Progresso - Google Fit
+              Meu Progresso Completo
             </h1>
             <p className="text-muted-foreground text-lg">
-              Acompanhe sua atividade física e evolução de saúde integrada
+              Acompanhe sua evolução: Google Fit + Tracking Manual Integrado
             </p>
           </div>
         </div>
         <div className="hidden md:flex items-center gap-2 px-4 py-2 bg-green-50 dark:bg-green-900/20 rounded-full">
           <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-          <span className="text-sm text-green-700 dark:text-green-400 font-medium">Google Fit Conectado</span>
+          <span className="text-sm text-green-700 dark:text-green-400 font-medium">Sistema Integrado Ativo</span>
         </div>
       </div>
 
-      {/* Cards de estatísticas principais */}
-      <motion.div
-        variants={cardVariants}
-        className="grid grid-cols-2 md:grid-cols-4 gap-4"
-      >
-        <Card className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 border-blue-200 dark:border-blue-800">
-          <CardContent className="mobile-padding text-center">
-            <div className="flex items-center justify-center mb-2">
-              <Target className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-            </div>
-            <div className="mobile-stat-number text-blue-700 dark:text-blue-300">
-              {weeklyStats.totalSteps.toLocaleString()}
-            </div>
-            <div className="text-xs lg:text-sm text-blue-600 dark:text-blue-400">Passos esta semana</div>
-            <div className="text-xs text-muted-foreground mt-1">+12% vs semana anterior</div>
-          </CardContent>
-        </Card>
+      {/* Conteúdo Principal com Abas */}
+      <Tabs defaultValue="overview" className="space-y-6">
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="overview" className="flex items-center gap-2">
+            <Target className="h-4 w-4" />
+            Visão Geral
+          </TabsTrigger>
+          <TabsTrigger value="google-fit" className="flex items-center gap-2">
+            <Activity className="h-4 w-4" />
+            Google Fit
+          </TabsTrigger>
+          <TabsTrigger value="tracking" className="flex items-center gap-2">
+            <Heart className="h-4 w-4" />
+            Tracking Manual
+          </TabsTrigger>
+        </TabsList>
 
-        <Card className="bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20 border-orange-200 dark:border-orange-800">
-          <CardContent className="mobile-padding text-center">
-            <div className="flex items-center justify-center mb-2">
-              <Activity className="w-6 h-6 text-orange-600 dark:text-orange-400" />
-            </div>
-            <div className="mobile-stat-number text-orange-700 dark:text-orange-300">
-              {weeklyStats.totalCalories}
-            </div>
-            <div className="text-xs lg:text-sm text-orange-600 dark:text-orange-400">Calorias queimadas</div>
-            <div className="text-xs text-muted-foreground mt-1">+8% vs semana anterior</div>
-          </CardContent>
-        </Card>
+        {/* Aba Visão Geral */}
+        <TabsContent value="overview" className="space-y-6">
+          {/* Cards de estatísticas principais */}
+          <motion.div
+            variants={cardVariants}
+            className="grid grid-cols-2 md:grid-cols-4 gap-4"
+          >
+            <Card className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 border-blue-200 dark:border-blue-800">
+              <CardContent className="mobile-padding text-center">
+                <div className="flex items-center justify-center mb-2">
+                  <Target className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                </div>
+                <div className="mobile-stat-number text-blue-700 dark:text-blue-300">
+                  {weeklyStats.totalSteps.toLocaleString()}
+                </div>
+                <div className="text-xs lg:text-sm text-blue-600 dark:text-blue-400">Passos esta semana</div>
+                <div className="text-xs text-muted-foreground mt-1">+12% vs semana anterior</div>
+              </CardContent>
+            </Card>
 
-        <Card className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 border-green-200 dark:border-green-800">
-          <CardContent className="mobile-padding text-center">
-            <div className="flex items-center justify-center mb-2">
-              <TrendingUp className="w-6 h-6 text-green-600 dark:text-green-400" />
-            </div>
-            <div className="mobile-stat-number text-green-700 dark:text-green-300">
-              {weeklyStats.totalDistance.toFixed(1)} km
-            </div>
-            <div className="text-xs lg:text-sm text-green-600 dark:text-green-400">Distância percorrida</div>
-            <div className="text-xs text-muted-foreground mt-1">+15% vs semana anterior</div>
-          </CardContent>
-        </Card>
+            <Card className="bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20 border-orange-200 dark:border-orange-800">
+              <CardContent className="mobile-padding text-center">
+                <div className="flex items-center justify-center mb-2">
+                  <Activity className="w-6 h-6 text-orange-600 dark:text-orange-400" />
+                </div>
+                <div className="mobile-stat-number text-orange-700 dark:text-orange-300">
+                  {weeklyStats.totalCalories}
+                </div>
+                <div className="text-xs lg:text-sm text-orange-600 dark:text-orange-400">Calorias queimadas</div>
+                <div className="text-xs text-muted-foreground mt-1">+8% vs semana anterior</div>
+              </CardContent>
+            </Card>
 
-        <Card className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 border-purple-200 dark:border-purple-800">
-          <CardContent className="mobile-padding text-center">
-            <div className="flex items-center justify-center mb-2">
-              <Activity className="w-6 h-6 text-purple-600 dark:text-purple-400" />
-            </div>
-            <div className="mobile-stat-number text-purple-700 dark:text-purple-300">
-              {weeklyStats.avgHeartRate}
-            </div>
-            <div className="text-xs lg:text-sm text-purple-600 dark:text-purple-400">BPM médio</div>
-            <div className="text-xs text-muted-foreground mt-1">Zona ideal</div>
-          </CardContent>
-        </Card>
-      </motion.div>
+            <Card className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 border-green-200 dark:border-green-800">
+              <CardContent className="mobile-padding text-center">
+                <div className="flex items-center justify-center mb-2">
+                  <TrendingUp className="w-6 h-6 text-green-600 dark:text-green-400" />
+                </div>
+                <div className="mobile-stat-number text-green-700 dark:text-green-300">
+                  {weeklyStats.totalDistance.toFixed(1)} km
+                </div>
+                <div className="text-xs lg:text-sm text-green-600 dark:text-green-400">Distância percorrida</div>
+                <div className="text-xs text-muted-foreground mt-1">+15% vs semana anterior</div>
+              </CardContent>
+            </Card>
 
-      {/* Resumo Semanal Detalhado */}
+            <Card className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 border-purple-200 dark:border-purple-800">
+              <CardContent className="mobile-padding text-center">
+                <div className="flex items-center justify-center mb-2">
+                  <Activity className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+                </div>
+                <div className="mobile-stat-number text-purple-700 dark:text-purple-300">
+                  {weeklyStats.avgHeartRate}
+                </div>
+                <div className="text-xs lg:text-sm text-purple-600 dark:text-purple-400">BPM médio</div>
+                <div className="text-xs text-muted-foreground mt-1">Zona ideal</div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        </TabsContent>
+
+        {/* Aba Google Fit */}
+        <TabsContent value="google-fit" className="space-y-6">
+          {/* Resumo Semanal Detalhado */}
       <motion.div variants={cardVariants}>
         <Card className="border-2 border-dashed border-primary/20 bg-gradient-to-r from-primary/5 via-transparent to-primary/5">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Activity className="w-5 h-5" />
-              Resumo Semanal Completo
+              Resumo Semanal Google Fit
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -199,16 +223,16 @@ const MyProgress: React.FC = () => {
             </div>
           </CardContent>
         </Card>
-      </motion.div>
+          </motion.div>
 
-      {/* Gráficos do Google Fit - Integrados */}
-      <GoogleFitCharts 
+          {/* Gráficos do Google Fit */}
+          <GoogleFitCharts 
         chartData={chartData}
         cardVariants={cardVariants}
       />
 
-      {/* Overview com integração dos dados da balança */}
-      <OverviewWithGoogleFit 
+          {/* Overview com integração dos dados da balança */}
+          <OverviewWithGoogleFit 
         score={85}
         currentWeight={75.8}
         weightTrend={-2.3}
@@ -238,8 +262,8 @@ const MyProgress: React.FC = () => {
         }}
       />
 
-      {/* Estatísticas Mensais */}
-      <motion.div variants={cardVariants}>
+          {/* Estatísticas Mensais */}
+          <motion.div variants={cardVariants}>
         <Card className="bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -288,7 +312,27 @@ const MyProgress: React.FC = () => {
             </div>
           </CardContent>
         </Card>
-      </motion.div>
+          </motion.div>
+        </TabsContent>
+
+        {/* Aba Tracking Manual */}
+        <TabsContent value="tracking" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Heart className="h-5 w-5 text-pink-500" />
+                Sistema de Tracking Manual
+              </CardTitle>
+              <p className="text-muted-foreground">
+                Registre manualmente água, sono, humor e outros hábitos de saúde
+              </p>
+            </CardHeader>
+            <CardContent>
+              <TrackingDashboard />
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </motion.div>
   );
 };

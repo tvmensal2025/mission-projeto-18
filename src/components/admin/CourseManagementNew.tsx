@@ -221,6 +221,7 @@ export const CourseManagementNew = () => {
   // Buscar aulas de um módulo
   const fetchLessons = async (moduleId: string) => {
     try {
+      console.log('🔍 fetchLessons chamado com moduleId:', moduleId);
       const { data, error } = await supabase
         .from('lessons')
         .select('*')
@@ -228,7 +229,18 @@ export const CourseManagementNew = () => {
         .order('order_index', { ascending: true });
 
       if (error) throw error;
+      
+      console.log('📋 Aulas encontradas:', data?.length || 0);
+      data?.forEach((lesson, index) => {
+        console.log(`📋 Aula ${index + 1}:`, {
+          id: lesson.id,
+          title: lesson.title,
+          module_id: lesson.module_id
+        });
+      });
+      
       setLessons(data || []);
+      console.log('✅ Estado lessons atualizado com', (data || []).length, 'aulas');
     } catch (error) {
       console.error('Erro ao buscar aulas:', error);
     }
@@ -299,6 +311,8 @@ export const CourseManagementNew = () => {
 
   const handleCreateLesson = async (lessonData: any) => {
     try {
+      console.log('🔍 handleCreateLesson chamado com dados:', lessonData);
+      
       // Mapear campos para a estrutura correta do banco
       const lessonToInsert = {
         title: lessonData.title,
@@ -312,11 +326,15 @@ export const CourseManagementNew = () => {
         course_id: lessonData.courseId
       };
 
+      console.log('📋 Payload para inserção:', lessonToInsert);
+
       const { error } = await supabase
         .from('lessons')
         .insert([lessonToInsert]);
 
       if (error) throw error;
+
+      console.log('✅ Aula criada com sucesso no banco');
 
       toast({
         title: "Sucesso!",
@@ -324,6 +342,7 @@ export const CourseManagementNew = () => {
       });
 
       if (selectedModule) {
+        console.log('🔄 Chamando fetchLessons para atualizar lista...');
         fetchLessons(selectedModule.id);
       }
       fetchStats();
@@ -780,6 +799,7 @@ export const CourseManagementNew = () => {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {console.log('🎨 Renderizando', lessons.length, 'aulas:', lessons.map(l => l.title))}
                 {lessons.map((lesson) => (
                   <Card key={lesson.id} className="hover:shadow-lg transition-shadow">
                     <CardHeader>

@@ -102,7 +102,7 @@ const UserDetailModal: React.FC<UserDetailModalProps> = ({
       const { data: profile } = await supabase
         .from('profiles')
         .select('*')
-        .eq('id', userId)
+        .eq('user_id', userId)
         .single();
 
       // Buscar dados físicos
@@ -211,7 +211,7 @@ const UserDetailModal: React.FC<UserDetailModalProps> = ({
           bio: editData.bio,
           updated_at: new Date().toISOString()
         })
-        .eq('id', userId);
+        .eq('user_id', userId);
 
       if (profileError) {
         console.error('Profile update error:', profileError);

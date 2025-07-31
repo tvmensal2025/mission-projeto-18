@@ -182,8 +182,27 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
       const userId = authData.user.id;
 
       // O perfil será criado automaticamente pelo trigger
+      // Aguardar um pouco para o trigger executar
+      await new Promise(resolve => setTimeout(resolve, 1000));
 
-      // Criar dados físicos se fornecidos
+      // Atualizar perfil com dados adicionais
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .update({
+          altura_cm: formData.altura_cm ? parseInt(formData.altura_cm) : null,
+          data_nascimento: formData.birth_date,
+          gender: formData.sexo === 'masculino' ? 'male' : formData.sexo === 'feminino' ? 'female' : 'neutral',
+          city: formData.city,
+          estado: formData.state,
+          updated_at: new Date().toISOString()
+        })
+        .eq('user_id', userId);
+
+      if (profileError) {
+        console.error('Profile update error:', profileError);
+      }
+
+      // Criar dados físicos se fornecidos (manter para compatibilidade)
       if (formData.altura_cm || formData.sexo || formData.nivel_atividade) {
         const { error: physicalError } = await supabase
           .from('user_physical_data')

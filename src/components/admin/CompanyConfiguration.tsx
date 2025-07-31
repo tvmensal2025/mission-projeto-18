@@ -81,7 +81,15 @@ const CompanyConfiguration: React.FC = () => {
         .from('company_data')
         .upsert({
           company_name: companyData.company_name,
-          description: companyData.about_us
+          mission: companyData.mission,
+          vision: companyData.vision,
+          company_values: companyData.values,
+          about_us: companyData.about_us,
+          target_audience: companyData.target_audience,
+          main_services: companyData.main_services,
+          differentials: companyData.differentials,
+          company_culture: companyData.company_culture,
+          health_philosophy: companyData.health_philosophy
         } as any)
         .select()
         .single();

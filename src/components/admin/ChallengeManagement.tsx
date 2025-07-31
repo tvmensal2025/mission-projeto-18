@@ -211,6 +211,27 @@ export default function ChallengeManagement({ user }: ChallengeManagementProps) 
 
   const createChallenge = async () => {
     try {
+      // Verificar se o usuário está autenticado
+      const { data: { user }, error: authError } = await supabase.auth.getUser();
+      if (authError) {
+        console.error('Auth error:', authError);
+        throw new Error('Erro de autenticação');
+      }
+      if (!user) {
+        throw new Error('Usuário não autenticado');
+      }
+
+      console.log('Criando desafio com dados:', {
+        title: formData.title,
+        description: formData.description,
+        category: formData.category,
+        difficulty: formData.difficulty,
+        duration_days: formData.duration_days,
+        xp_reward: formData.points_reward,
+        is_active: true,
+        created_by: user.id
+      });
+
       // Criar desafio real no banco de dados
       const { data, error } = await supabase
         .from('challenges')
@@ -221,12 +242,16 @@ export default function ChallengeManagement({ user }: ChallengeManagementProps) 
           difficulty: formData.difficulty,
           duration_days: formData.duration_days,
           xp_reward: formData.points_reward,
-          is_active: true
+          is_active: true,
+          created_by: user.id
         }])
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase error:', error);
+        throw error;
+      }
 
       toast({
         title: "Desafio Criado! ✅", 
@@ -238,9 +263,11 @@ export default function ChallengeManagement({ user }: ChallengeManagementProps) 
       loadChallenges(); // Recarregar lista
     } catch (error) {
       console.error('Error creating challenge:', error);
+      console.error('Error details:', JSON.stringify(error, null, 2));
+      const errorMessage = error?.message || error?.details || 'Erro desconhecido';
       toast({
         title: "Erro",
-        description: "Não foi possível criar o desafio",
+        description: `Não foi possível criar o desafio: ${errorMessage}`,
         variant: "destructive"
       });
     }

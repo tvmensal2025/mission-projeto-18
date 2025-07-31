@@ -42,13 +42,15 @@ import SessionManagement from "@/components/admin/SessionManagement";
 import ChallengeManagement from "@/components/admin/ChallengeManagement";
 import { N8nWebhookManager } from "@/components/N8nWebhookManager";
 import { AIConfigurationAdvanced } from "@/components/admin/AIConfigurationAdvanced";
+import { IAManagement } from "@/components/admin/IAManagement";
 import IntelligentReports from "@/components/admin/IntelligentReports";
 import CompanyConfiguration from "@/components/admin/CompanyConfiguration";
-import PreventiveAnalyticsDashboard from "@/components/admin/PreventiveAnalyticsDashboard";
+
 
 import SystemStatus from "@/components/admin/SystemStatus";
 import SimulatedTests from "@/components/admin/SimulatedTests";
 import PlatformAudit from "@/components/admin/PlatformAudit";
+import RoleManagement from "@/components/admin/RoleManagement";
 
 const AdminPage = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -156,7 +158,8 @@ const AdminPage = () => {
     { id: 'challenges', icon: Award, label: 'Gestão de Metas e Desafios', color: 'text-pink-500', description: 'Criar e gerenciar metas e desafios' },
     { id: 'payments', icon: CreditCard, label: 'Gestão de Pagamentos', color: 'text-emerald-500', description: 'Gestão Asaas e assinaturas' },
     { id: 'company-config', icon: Building2, label: '🏢 Dados da Empresa', color: 'text-indigo-500', description: 'Configure dados da empresa para melhor IA' },
-    { id: 'preventive-analytics', icon: Activity, label: '🔮 Análises Preventivas', color: 'text-red-500', description: 'Dr. Vital - Análises quinzenais e mensais automatizadas' },
+    
+    { id: 'ia-management', icon: Brain, label: '🤖 Personalidades IA', color: 'text-indigo-500', description: 'Gerencie Sofia e Dr.Vital - Personalidades, Conhecimento e Testes' },
     { id: 'ai-config', icon: Bot, label: '🚀 IA Inteligente', color: 'text-purple-500', description: 'Configuração Avançada - MÁXIMO/MEIO/MÍNIMO' },
     { id: 'sessions', icon: FileText, label: 'Gestão de Sessões', color: 'text-cyan-500', description: 'Criar e enviar sessões personalizadas' },
     { id: 'n8n', icon: Activity, label: 'Automação n8n', color: 'text-violet-500', description: 'Webhooks para WhatsApp e automações' },
@@ -166,6 +169,7 @@ const AdminPage = () => {
     { id: 'support', icon: HelpCircle, label: 'Suporte e Ajuda', color: 'text-pink-500', description: 'Central de suporte' },
     { id: 'backup', icon: Database, label: 'Backup e Manutenção', color: 'text-gray-500', description: 'Backup e manutenção' },
     { id: 'system', icon: Database, label: 'Status do Sistema', color: 'text-blue-500', description: 'Verificar funcionamento' },
+    { id: 'roles', icon: Shield, label: 'Gerenciamento de Roles', color: 'text-purple-500', description: 'Gerenciar roles e permissões de usuários' },
     { id: 'tests', icon: Activity, label: 'Admin Principal', color: 'text-green-500', description: 'Interface principal de administração' },
   ];
 
@@ -204,8 +208,9 @@ const AdminPage = () => {
         return <ChallengeManagement user={user} />;
       case 'company-config':
         return <CompanyConfiguration />;
-      case 'preventive-analytics':
-        return <PreventiveAnalyticsDashboard />;
+
+      case 'ia-management':
+        return <IAManagement />;
       case 'ai-config':
         return (
           <div className="space-y-6">
@@ -981,6 +986,8 @@ const AdminPage = () => {
             </div>
           </div>
         );
+      case 'roles':
+        return <RoleManagement user={user} />;
       case 'tests':
         return <SimulatedTests />;
       default:

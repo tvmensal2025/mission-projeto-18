@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  # Aplicação React
+  app:
+    build: .
+    ports:
+      - "3000:80"
+    environment:
+      - NODE_ENV=development
+      - REACT_APP_SUPABASE_URL=http://localhost:54321
+      - REACT_APP_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhscmtveXl3anBja2RvdGltdGlrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTMxNTMwNDcsImV4cCI6MjA2ODcyOTA0N30.kYEtg1hYG2pmcyIeXRs-vgNIVOD76Yu7KPlyFN0vdUI
+    volumes:
+      - ./src:/app/src
+      - ./public:/usr/share/nginx/html/public
+    depends_on:
+      - supabase
+    restart: unless-stopped
+
+  # Supabase Local Development
+  supabase:
+    image: supabase/postgres:15.1.0.117
+    ports:
+      - "5432:5432"
+      - "54321:54321"  # API
+      - "54322:54322"  # Database
+      - "54323:54323"  # Studio
+      - "54324:54324"  # Inbucket (email testing)
+      - "54329:54329"  # Connection pooler
+    environment:
+      POSTGRES_PASSWORD: your-super-secret-and-long-postgres-password
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      # Configurações do Supabase
+      SUPABASE_URL: http://localhost:54321
+      SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhscmtveXl3anBja2RvdGltdGlrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTMxNTMwNDcsImV4cCI6MjA2ODcyOTA0N30.kYEtg1hYG2pmcyIeXRs-vgNIVOD76Yu7KPlyFN0vdUI
+    volumes:
+      - supabase_data:/var/lib/postgresql/data
+      - ./supabase:/supabase
+    restart: unless-stopped
+
+  # Redis para cache (opcional)
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+
+volumes:
+  supabase_data:
+  redis_data: 
