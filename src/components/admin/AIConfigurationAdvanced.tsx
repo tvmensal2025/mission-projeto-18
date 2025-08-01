@@ -35,8 +35,6 @@ interface AIConfig {
   system_prompt: string;
   created_at: string;
   updated_at: string;
-  is_enabled: boolean;
-  preset_level: string;
 }
 
 export function AIConfigurationAdvanced() {
@@ -76,11 +74,7 @@ export function AIConfigurationAdvanced() {
 
       if (error) throw error;
 
-      setConfigs((data || []).map(item => ({
-        ...item,
-        is_enabled: item.is_active,
-        preset_level: 'medio'
-      })));
+      setConfigs(data || []);
       console.log('✅ Configurações carregadas:', data?.length || 0);
     } catch (error) {
       console.error('❌ Erro ao carregar configurações:', error);
@@ -163,7 +157,8 @@ export function AIConfigurationAdvanced() {
       // Update all configurations
       for (const item of configs) {
         await updateConfiguration(item.functionality, {
-          ...config
+          ...config,
+          preset_level: preset
         });
       }
 
@@ -192,7 +187,8 @@ export function AIConfigurationAdvanced() {
           service: template.configurations.default_service || 'openai',
           model: template.configurations.default_model || 'gpt-4.1-2025-04-14',
           max_tokens: template.configurations.default_tokens || 4096,
-          temperature: template.configurations.default_temperature || 0.7
+          temperature: template.configurations.default_temperature || 0.7,
+          preset_level: 'personalizado'
         });
       }
 
