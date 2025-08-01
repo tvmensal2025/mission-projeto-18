@@ -184,6 +184,8 @@ export function UserProfileSidebar({ user, onUpdateProfile }: UserProfileSidebar
           <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 rounded-full border-3 border-background flex items-center justify-center">
             <div className="w-2 h-2 bg-white rounded-full"></div>
           </div>
+          {/* Indicador de Anamnese Pendente */}
+          
         </div>
         
         <div className="space-y-2">

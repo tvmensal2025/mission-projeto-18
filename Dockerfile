@@ -7,14 +7,14 @@ WORKDIR /app
 COPY package*.json ./
 COPY bun.lockb ./
 
-# Install all dependencies (including dev dependencies for build)
-RUN npm ci
+# Install dependencies
+RUN npm ci --only=production
 
 # Copy source code
 COPY . .
 
 # Build the application
-RUN npm run build
+RUN npm run build:prod
 
 # Production stage
 FROM nginx:alpine

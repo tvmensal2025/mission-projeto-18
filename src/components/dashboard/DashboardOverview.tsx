@@ -99,28 +99,28 @@ const DashboardOverview: React.FC = () => {
     getCurrentUser();
   }, []);
 
-  // Atualização em tempo real desabilitada temporariamente
-  // useEffect(() => {
-  //   const channel = supabase
-  //     .channel('weight-measurements-changes')
-  //     .on(
-  //       'postgres_changes',
-  //       {
-  //         event: '*',
-  //         schema: 'public',
-  //         table: 'weight_measurements'
-  //       },
-  //       () => {
-  //         // Recarregar dados quando houver mudanças
-  //         window.location.reload();
-  //       }
-  //     )
-  //     .subscribe();
+  // Atualização em tempo real
+  useEffect(() => {
+    const channel = supabase
+      .channel('weight-measurements-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'weight_measurements'
+        },
+        () => {
+          // Recarregar dados quando houver mudanças
+          window.location.reload();
+        }
+      )
+      .subscribe();
 
-  //   return () => {
-  //     supabase.removeChannel(channel);
-  //   };
-  // }, []);
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
 
   // Preparar dados do gráfico de peso
   useEffect(() => {

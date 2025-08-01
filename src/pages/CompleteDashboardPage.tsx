@@ -48,7 +48,6 @@ import { HealthFeedPage } from "@/pages/HealthFeedPage";
 import { UserProfileSidebar } from "@/components/ui/user-profile-sidebar";
 import PaymentPlans from "@/components/PaymentPlans";
 import ChallengesSection from "@/components/dashboard/ChallengesSection";
-import PreventiveAnalyticsDashboard from "@/components/dashboard/PreventiveAnalyticsDashboard";
 
 type DashboardSection = 
   | 'dashboard' 
@@ -64,8 +63,7 @@ type DashboardSection =
   | 'apps'
   | 'help'
   | 'profile'
-  | 'debug'
-  | 'analises-preventivas';
+  | 'debug';
 
 const CompleteDashboardPage = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -120,7 +118,6 @@ const CompleteDashboardPage = () => {
     { id: 'saboteur-test', icon: Settings, label: 'Teste de Sabotadores', color: 'text-gray-500' },
     { id: 'progress', icon: TrendingUp, label: 'Meu Progresso', color: 'text-cyan-500' },
     { id: 'subscriptions', icon: CreditCard, label: 'Assinaturas', color: 'text-purple-600' },
-    { id: 'analises-preventivas', icon: Grid3X3, label: 'Análises Preventivas', color: 'text-yellow-500' },
   ];
 
   const renderContent = () => {
@@ -145,8 +142,6 @@ const CompleteDashboardPage = () => {
         return <HealthFeedPage />;
       case 'subscriptions':
         return <PaymentPlans />;
-      case 'analises-preventivas':
-        return <PreventiveAnalyticsDashboard />;
       case 'profile':
         return (
           <div className="p-6">

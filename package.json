@@ -6,17 +6,12 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "build:prod": "NODE_ENV=production vite build --mode production",
-    "build:dev": "NODE_ENV=development vite build --mode development",
+    "build:dev": "vite build --mode development",
+    "build:prod": "vite build --mode production",
     "lint": "eslint .",
     "preview": "vite preview",
     "deploy": "npm run build:prod",
-    "deploy:lovable": "npm run build:prod",
-    "supabase:start": "supabase start",
-    "supabase:stop": "supabase stop",
-    "supabase:status": "supabase status",
-    "supabase:reset": "supabase db reset",
-    "supabase:logs": "supabase logs"
+    "deploy:dev": "npm run build:dev"
   },
   "dependencies": {
     "@capacitor/android": "^7.4.2",
@@ -100,9 +95,9 @@
     "eslint-plugin-react-hooks": "^5.1.0-rc.0",
     "eslint-plugin-react-refresh": "^0.4.9",
     "globals": "^15.9.0",
+    "lovable-tagger": "^1.1.8",
     "postcss": "^8.4.47",
     "tailwindcss": "^3.4.11",
-    "terser": "^5.43.1",
     "typescript": "^5.5.3",
     "typescript-eslint": "^8.0.1",
     "vite": "^5.4.1"

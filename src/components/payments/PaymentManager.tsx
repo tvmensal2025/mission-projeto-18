@@ -25,6 +25,7 @@ export function PaymentManager() {
     clearStatus,
     clearData,
     isEnabled,
+    isSandbox,
   } = useAsaasPayments();
 
   const [customerData, setCustomerData] = useState<CustomerData>({
@@ -169,8 +170,8 @@ export function PaymentManager() {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-center gap-2">
-            <Badge variant="default">
-              Produção
+            <Badge variant={isSandbox ? "secondary" : "default"}>
+              {isSandbox ? "Sandbox" : "Produção"}
             </Badge>
             <Badge variant={status.isLoading ? "secondary" : status.success ? "default" : "destructive"}>
               {status.isLoading ? "Carregando..." : status.success ? "Sucesso" : "Erro"}

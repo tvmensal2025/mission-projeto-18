@@ -246,5 +246,6 @@ export function useAsaasPayments() {
     
     // Utilitários
     isEnabled: config.features.enableAsaasPayments,
+    isSandbox: config.asaas.isSandbox,
   };
 } 

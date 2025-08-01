@@ -33,13 +33,13 @@ const IntelligentReports: React.FC = () => {
     try {
       const { data, error } = await supabase
         .from('profiles')
-        .select('id, full_name, email')
+        .select('user_id, full_name, email')
         .order('full_name');
 
       if (error) throw error;
 
       const formattedUsers = data.map(user => ({
-        id: user.id,
+        id: user.user_id,
         full_name: user.full_name || 'Usuário sem nome',
         email: user.email || 'Email não informado'
       }));

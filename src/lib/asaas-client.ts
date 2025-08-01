@@ -161,7 +161,7 @@ export class AsaasClient {
   private baseUrl: string;
 
   constructor() {
-    this.apiKey = config.asaas.apiKey;
+    this.apiKey = config.asaas.isSandbox ? config.asaas.sandboxApiKey : config.asaas.apiKey;
     this.baseUrl = config.asaas.baseUrl;
   }
 
