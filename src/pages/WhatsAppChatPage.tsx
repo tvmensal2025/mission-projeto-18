@@ -37,14 +37,17 @@ const WhatsAppChatPage: React.FC = () => {
   const navigate = useNavigate();
   const { checkAndGenerateIfNeeded } = useWeeklyChatInsights();
 
-  // Função para determinar personagem baseado no dia
-  const getCurrentCharacter = (): Character => {
+  // Função para determinar personagem baseado na resposta da IA
+  const getCurrentCharacter = (aiResponse?: any): Character => {
     const currentDay = new Date().getDay();
     const isFriday = currentDay === 5;
     
-    if (isFriday) {
+    // Usar resposta da IA se disponível
+    const characterName = aiResponse?.character || (isFriday ? 'Dr. Vital' : 'Sofia');
+    
+    if (characterName === 'Dr. Vital' || isFriday) {
       return {
-        name: 'Dr. Vita',
+        name: 'Dr. Vital',
         avatar: 'DV',
         subtitle: 'online',
         colors: {
@@ -54,7 +57,7 @@ const WhatsAppChatPage: React.FC = () => {
       };
     } else {
       return {
-        name: 'Sof.ia',
+        name: 'Sofia',
         avatar: 'SF',
         subtitle: 'online',
         colors: {
@@ -80,10 +83,10 @@ const WhatsAppChatPage: React.FC = () => {
     // Mensagem de boas-vindas personalizada por personagem
     let welcomeContent = '';
     
-    if (character.name === 'Dr. Vita') {
-      welcomeContent = '👨‍⚕️ Oi! Sou o Dr. Vita.\n\nSexta-feira, hora do seu resumo semanal!\n\nComo você está?';
+    if (character.name === 'Dr. Vital') {
+      welcomeContent = '👨‍⚕️ Oi! Sou o Dr. Vital.\n\nSexta-feira, hora do seu resumo semanal!\n\nComo você está?';
     } else {
-      welcomeContent = '💜 Oi!\n\nSou a Sof.ia, sua amiga de bem-estar.\n\nComo foi seu dia?';
+      welcomeContent = '💜 Oi!\n\nSou a Sofia, sua amiga de bem-estar.\n\nComo foi seu dia?';
     }
     
     const welcomeMessage: Message = {
@@ -164,6 +167,12 @@ const WhatsAppChatPage: React.FC = () => {
       };
 
       setMessages(prev => [...prev, botMessage]);
+
+      // Atualizar personagem baseado na resposta da IA
+      if (data.character) {
+        const updatedCharacter = getCurrentCharacter(data);
+        setCurrentCharacter(updatedCharacter);
+      }
 
       // Verificar e gerar insights semanais se necessário
       setTimeout(() => {

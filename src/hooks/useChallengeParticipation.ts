@@ -34,14 +34,8 @@ export const useChallengeParticipation = () => {
       if (!user) throw new Error('Usuário não autenticado');
 
       // Verificar se já está participando
-      const { data: existing } = await supabase
-        .from('challenge_participations')
-        .select('id')
-        .eq('user_id', user.id)
-        .eq('challenge_id', challengeId)
-        .maybeSingle();
-
-      if (existing) {
+      const existingParticipation = participations?.find(p => p.challenge_id === challengeId);
+      if (existingParticipation) {
         throw new Error('Você já está participando deste desafio');
       }
 
@@ -50,30 +44,42 @@ export const useChallengeParticipation = () => {
         .from('challenges')
         .select('target_value')
         .eq('id', challengeId)
-        .single();
+        .maybeSingle();
 
       if (challengeError) throw challengeError;
+      if (!challenge) throw new Error('Desafio não encontrado');
 
-      // Criar participação
+      // Inserir nova participação
       const { data, error } = await supabase
         .from('challenge_participations')
         .insert({
           user_id: user.id,
           challenge_id: challengeId,
           target_value: challenge.target_value || 1,
-          progress: 0
+          progress: 0,
+          current_streak: 0,
+          best_streak: 0,
+          is_completed: false,
+          started_at: new Date().toISOString()
         })
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        // Se der erro de constraint única, significa que já está participando
+        if (error.code === '23505') {
+          throw new Error('Você já está participando deste desafio');
+        }
+        throw error;
+      }
       return data;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       toast({
         title: "🎯 Desafio Iniciado!",
         description: "Você agora está participando do desafio!",
       });
+      // Invalidar queries para atualizar a UI imediatamente
       queryClient.invalidateQueries({ queryKey: ['challenge-participations'] });
     },
     onError: (error: Error) => {

@@ -16,43 +16,40 @@ export type Database = {
     Tables: {
       ai_configurations: {
         Row: {
-          created_at: string | null
+          created_at: string
           functionality: string
           id: string
           is_active: boolean | null
-          is_enabled: boolean | null
           max_tokens: number | null
           model: string
-          preset_level: string | null
           service: string
+          system_prompt: string | null
           temperature: number | null
-          updated_at: string | null
+          updated_at: string
         }
         Insert: {
-          created_at?: string | null
+          created_at?: string
           functionality: string
           id?: string
           is_active?: boolean | null
-          is_enabled?: boolean | null
           max_tokens?: number | null
-          model?: string
-          preset_level?: string | null
-          service?: string
+          model: string
+          service: string
+          system_prompt?: string | null
           temperature?: number | null
-          updated_at?: string | null
+          updated_at?: string
         }
         Update: {
-          created_at?: string | null
+          created_at?: string
           functionality?: string
           id?: string
           is_active?: boolean | null
-          is_enabled?: boolean | null
           max_tokens?: number | null
           model?: string
-          preset_level?: string | null
           service?: string
+          system_prompt?: string | null
           temperature?: number | null
-          updated_at?: string | null
+          updated_at?: string
         }
         Relationships: []
       }
@@ -98,51 +95,45 @@ export type Database = {
       challenge_participations: {
         Row: {
           best_streak: number | null
-          challenge_id: string | null
+          challenge_id: string
           completed_at: string | null
           created_at: string | null
-          current_progress: number | null
           current_streak: number | null
-          daily_logs: Json | null
           id: string
           is_completed: boolean | null
-          joined_at: string | null
           progress: number | null
           started_at: string | null
+          target_value: number
           updated_at: string | null
-          user_id: string | null
+          user_id: string
         }
         Insert: {
           best_streak?: number | null
-          challenge_id?: string | null
+          challenge_id: string
           completed_at?: string | null
           created_at?: string | null
-          current_progress?: number | null
           current_streak?: number | null
-          daily_logs?: Json | null
           id?: string
           is_completed?: boolean | null
-          joined_at?: string | null
           progress?: number | null
           started_at?: string | null
+          target_value?: number
           updated_at?: string | null
-          user_id?: string | null
+          user_id: string
         }
         Update: {
           best_streak?: number | null
-          challenge_id?: string | null
+          challenge_id?: string
           completed_at?: string | null
           created_at?: string | null
-          current_progress?: number | null
           current_streak?: number | null
-          daily_logs?: Json | null
           id?: string
           is_completed?: boolean | null
-          joined_at?: string | null
           progress?: number | null
           started_at?: string | null
+          target_value?: number
           updated_at?: string | null
-          user_id?: string | null
+          user_id?: string
         }
         Relationships: [
           {
@@ -156,85 +147,43 @@ export type Database = {
       }
       challenges: {
         Row: {
-          badge_icon: string | null
-          badge_name: string | null
           category: string | null
           challenge_type: string | null
           created_at: string | null
-          created_by: string | null
-          daily_log_target: number | null
-          daily_log_type: string | null
-          daily_log_unit: string | null
           description: string | null
           difficulty: string | null
           duration_days: number | null
-          end_date: string | null
           id: string
-          instructions: string | null
           is_active: boolean | null
-          is_featured: boolean | null
-          is_group_challenge: boolean | null
-          max_participants: number | null
-          points_reward: number | null
-          start_date: string | null
           target_value: number | null
-          tips: string[] | null
           title: string
           updated_at: string | null
           xp_reward: number | null
         }
         Insert: {
-          badge_icon?: string | null
-          badge_name?: string | null
           category?: string | null
           challenge_type?: string | null
           created_at?: string | null
-          created_by?: string | null
-          daily_log_target?: number | null
-          daily_log_type?: string | null
-          daily_log_unit?: string | null
           description?: string | null
           difficulty?: string | null
           duration_days?: number | null
-          end_date?: string | null
           id?: string
-          instructions?: string | null
           is_active?: boolean | null
-          is_featured?: boolean | null
-          is_group_challenge?: boolean | null
-          max_participants?: number | null
-          points_reward?: number | null
-          start_date?: string | null
           target_value?: number | null
-          tips?: string[] | null
           title: string
           updated_at?: string | null
           xp_reward?: number | null
         }
         Update: {
-          badge_icon?: string | null
-          badge_name?: string | null
           category?: string | null
           challenge_type?: string | null
           created_at?: string | null
-          created_by?: string | null
-          daily_log_target?: number | null
-          daily_log_type?: string | null
-          daily_log_unit?: string | null
           description?: string | null
           difficulty?: string | null
           duration_days?: number | null
-          end_date?: string | null
           id?: string
-          instructions?: string | null
           is_active?: boolean | null
-          is_featured?: boolean | null
-          is_group_challenge?: boolean | null
-          max_participants?: number | null
-          points_reward?: number | null
-          start_date?: string | null
           target_value?: number | null
-          tips?: string[] | null
           title?: string
           updated_at?: string | null
           xp_reward?: number | null
@@ -246,37 +195,43 @@ export type Database = {
           address: string | null
           company_name: string
           contact_email: string | null
-          created_at: string | null
+          created_at: string
           description: string | null
           id: string
           logo_url: string | null
           phone: string | null
-          updated_at: string | null
-          website: string | null
+          primary_color: string | null
+          secondary_color: string | null
+          updated_at: string
+          website_url: string | null
         }
         Insert: {
           address?: string | null
           company_name: string
           contact_email?: string | null
-          created_at?: string | null
+          created_at?: string
           description?: string | null
           id?: string
           logo_url?: string | null
           phone?: string | null
-          updated_at?: string | null
-          website?: string | null
+          primary_color?: string | null
+          secondary_color?: string | null
+          updated_at?: string
+          website_url?: string | null
         }
         Update: {
           address?: string | null
           company_name?: string
           contact_email?: string | null
-          created_at?: string | null
+          created_at?: string
           description?: string | null
           id?: string
           logo_url?: string | null
           phone?: string | null
-          updated_at?: string | null
-          website?: string | null
+          primary_color?: string | null
+          secondary_color?: string | null
+          updated_at?: string
+          website_url?: string | null
         }
         Relationships: []
       }
@@ -319,7 +274,9 @@ export type Database = {
           created_at: string
           description: string | null
           id: string
+          is_active: boolean | null
           order_index: number
+          thumbnail_url: string | null
           title: string
         }
         Insert: {
@@ -327,7 +284,9 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: string
+          is_active?: boolean | null
           order_index: number
+          thumbnail_url?: string | null
           title: string
         }
         Update: {
@@ -335,7 +294,9 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: string
+          is_active?: boolean | null
           order_index?: number
+          thumbnail_url?: string | null
           title?: string
         }
         Relationships: [
@@ -630,6 +591,102 @@ export type Database = {
         }
         Relationships: []
       }
+      goal_categories: {
+        Row: {
+          color: string | null
+          created_at: string | null
+          description: string | null
+          icon: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          updated_at: string | null
+        }
+        Insert: {
+          color?: string | null
+          created_at?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          updated_at?: string | null
+        }
+        Update: {
+          color?: string | null
+          created_at?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      goal_updates: {
+        Row: {
+          created_at: string
+          goal_id: string
+          id: string
+          new_value: number
+          notes: string | null
+          previous_value: number | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          goal_id: string
+          id?: string
+          new_value: number
+          notes?: string | null
+          previous_value?: number | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          goal_id?: string
+          id?: string
+          new_value?: number
+          notes?: string | null
+          previous_value?: number | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      google_fit_data: {
+        Row: {
+          created_at: string | null
+          data_type: string
+          id: string
+          recorded_at: string | null
+          synced_at: string | null
+          unit: string | null
+          user_id: string | null
+          value: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          data_type: string
+          id?: string
+          recorded_at?: string | null
+          synced_at?: string | null
+          unit?: string | null
+          user_id?: string | null
+          value?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          data_type?: string
+          id?: string
+          recorded_at?: string | null
+          synced_at?: string | null
+          unit?: string | null
+          user_id?: string | null
+          value?: number | null
+        }
+        Relationships: []
+      }
       health_diary: {
         Row: {
           created_at: string
@@ -666,6 +723,54 @@ export type Database = {
           sleep_hours?: number | null
           user_id?: string
           water_intake?: number | null
+        }
+        Relationships: []
+      }
+      health_feed_posts: {
+        Row: {
+          achievement_data: Json | null
+          achievement_type: string | null
+          comments_count: number | null
+          content: string
+          created_at: string
+          id: string
+          is_public: boolean | null
+          likes_count: number | null
+          media_urls: string[] | null
+          tags: string[] | null
+          updated_at: string
+          user_id: string
+          visibility: string | null
+        }
+        Insert: {
+          achievement_data?: Json | null
+          achievement_type?: string | null
+          comments_count?: number | null
+          content: string
+          created_at?: string
+          id?: string
+          is_public?: boolean | null
+          likes_count?: number | null
+          media_urls?: string[] | null
+          tags?: string[] | null
+          updated_at?: string
+          user_id: string
+          visibility?: string | null
+        }
+        Update: {
+          achievement_data?: Json | null
+          achievement_type?: string | null
+          comments_count?: number | null
+          content?: string
+          created_at?: string
+          id?: string
+          is_public?: boolean | null
+          likes_count?: number | null
+          media_urls?: string[] | null
+          tags?: string[] | null
+          updated_at?: string
+          user_id?: string
+          visibility?: string | null
         }
         Relationships: []
       }
@@ -752,6 +857,8 @@ export type Database = {
       }
       lessons: {
         Row: {
+          content: string | null
+          course_id: string | null
           created_at: string
           description: string | null
           duration_minutes: number | null
@@ -763,6 +870,8 @@ export type Database = {
           video_url: string | null
         }
         Insert: {
+          content?: string | null
+          course_id?: string | null
           created_at?: string
           description?: string | null
           duration_minutes?: number | null
@@ -774,6 +883,8 @@ export type Database = {
           video_url?: string | null
         }
         Update: {
+          content?: string | null
+          course_id?: string | null
           created_at?: string
           description?: string | null
           duration_minutes?: number | null
@@ -827,40 +938,85 @@ export type Database = {
         }
         Relationships: []
       }
+      preventive_health_analyses: {
+        Row: {
+          analysis_data: Json | null
+          analysis_date: string | null
+          analysis_type: string
+          created_at: string | null
+          id: string
+          recommendations: string[] | null
+          risk_level: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          analysis_data?: Json | null
+          analysis_date?: string | null
+          analysis_type: string
+          created_at?: string | null
+          id?: string
+          recommendations?: string[] | null
+          risk_level?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          analysis_data?: Json | null
+          analysis_date?: string | null
+          analysis_type?: string
+          created_at?: string | null
+          id?: string
+          recommendations?: string[] | null
+          risk_level?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
+          admin_level: string | null
           avatar_url: string | null
           birth_date: string | null
           city: string | null
           created_at: string
           email: string | null
           full_name: string | null
+          gender: string | null
           id: string
           phone: string | null
+          role: string | null
           updated_at: string
           user_id: string | null
         }
         Insert: {
+          admin_level?: string | null
           avatar_url?: string | null
           birth_date?: string | null
           city?: string | null
           created_at?: string
           email?: string | null
           full_name?: string | null
+          gender?: string | null
           id?: string
           phone?: string | null
+          role?: string | null
           updated_at?: string
           user_id?: string | null
         }
         Update: {
+          admin_level?: string | null
           avatar_url?: string | null
           birth_date?: string | null
           city?: string | null
           created_at?: string
           email?: string | null
           full_name?: string | null
+          gender?: string | null
           id?: string
           phone?: string | null
+          role?: string | null
           updated_at?: string
           user_id?: string | null
         }
@@ -880,6 +1036,7 @@ export type Database = {
           materials_needed: string[] | null
           target_saboteurs: string[] | null
           title: string
+          tools: Json | null
           tools_data: Json | null
           type: string
           updated_at: string | null
@@ -897,6 +1054,7 @@ export type Database = {
           materials_needed?: string[] | null
           target_saboteurs?: string[] | null
           title: string
+          tools?: Json | null
           tools_data?: Json | null
           type?: string
           updated_at?: string | null
@@ -914,6 +1072,7 @@ export type Database = {
           materials_needed?: string[] | null
           target_saboteurs?: string[] | null
           title?: string
+          tools?: Json | null
           tools_data?: Json | null
           type?: string
           updated_at?: string | null
@@ -1089,37 +1248,76 @@ export type Database = {
       }
       user_goals: {
         Row: {
+          admin_notes: string | null
+          approved_at: string | null
+          approved_by: string | null
+          category: string | null
+          challenge_id: string | null
           created_at: string | null
-          data_fim: string | null
-          data_inicio: string | null
-          gordura_corporal_meta_percent: number | null
+          current_value: number | null
+          description: string | null
+          difficulty: string | null
+          estimated_points: number | null
+          evidence_required: boolean | null
+          final_points: number | null
           id: string
-          imc_meta: number | null
-          peso_meta_kg: number | null
+          is_group_goal: boolean | null
+          rejection_reason: string | null
           status: string | null
-          user_id: string | null
+          target_date: string | null
+          target_value: number | null
+          title: string
+          unit: string | null
+          updated_at: string | null
+          user_id: string
         }
         Insert: {
+          admin_notes?: string | null
+          approved_at?: string | null
+          approved_by?: string | null
+          category?: string | null
+          challenge_id?: string | null
           created_at?: string | null
-          data_fim?: string | null
-          data_inicio?: string | null
-          gordura_corporal_meta_percent?: number | null
+          current_value?: number | null
+          description?: string | null
+          difficulty?: string | null
+          estimated_points?: number | null
+          evidence_required?: boolean | null
+          final_points?: number | null
           id?: string
-          imc_meta?: number | null
-          peso_meta_kg?: number | null
+          is_group_goal?: boolean | null
+          rejection_reason?: string | null
           status?: string | null
-          user_id?: string | null
+          target_date?: string | null
+          target_value?: number | null
+          title: string
+          unit?: string | null
+          updated_at?: string | null
+          user_id: string
         }
         Update: {
+          admin_notes?: string | null
+          approved_at?: string | null
+          approved_by?: string | null
+          category?: string | null
+          challenge_id?: string | null
           created_at?: string | null
-          data_fim?: string | null
-          data_inicio?: string | null
-          gordura_corporal_meta_percent?: number | null
+          current_value?: number | null
+          description?: string | null
+          difficulty?: string | null
+          estimated_points?: number | null
+          evidence_required?: boolean | null
+          final_points?: number | null
           id?: string
-          imc_meta?: number | null
-          peso_meta_kg?: number | null
+          is_group_goal?: boolean | null
+          rejection_reason?: string | null
           status?: string | null
-          user_id?: string | null
+          target_date?: string | null
+          target_value?: number | null
+          title?: string
+          unit?: string | null
+          updated_at?: string | null
+          user_id?: string
         }
         Relationships: []
       }
@@ -1162,6 +1360,7 @@ export type Database = {
         Row: {
           altura_cm: number
           created_at: string | null
+          gender: string | null
           id: string
           idade: number
           nivel_atividade: string | null
@@ -1172,6 +1371,7 @@ export type Database = {
         Insert: {
           altura_cm: number
           created_at?: string | null
+          gender?: string | null
           id?: string
           idade: number
           nivel_atividade?: string | null
@@ -1182,6 +1382,7 @@ export type Database = {
         Update: {
           altura_cm?: number
           created_at?: string | null
+          gender?: string | null
           id?: string
           idade?: number
           nivel_atividade?: string | null
@@ -1229,46 +1430,67 @@ export type Database = {
       user_sessions: {
         Row: {
           assigned_at: string | null
+          auto_save_data: Json | null
           completed_at: string | null
           created_at: string | null
+          cycle_number: number | null
           due_date: string | null
           feedback: Json | null
           id: string
+          is_locked: boolean | null
+          last_activity: string | null
+          next_available_date: string | null
           notes: string | null
           progress: number | null
+          review_count: number | null
           session_id: string | null
           started_at: string | null
           status: string | null
+          tools_data: Json | null
           updated_at: string | null
           user_id: string | null
         }
         Insert: {
           assigned_at?: string | null
+          auto_save_data?: Json | null
           completed_at?: string | null
           created_at?: string | null
+          cycle_number?: number | null
           due_date?: string | null
           feedback?: Json | null
           id?: string
+          is_locked?: boolean | null
+          last_activity?: string | null
+          next_available_date?: string | null
           notes?: string | null
           progress?: number | null
+          review_count?: number | null
           session_id?: string | null
           started_at?: string | null
           status?: string | null
+          tools_data?: Json | null
           updated_at?: string | null
           user_id?: string | null
         }
         Update: {
           assigned_at?: string | null
+          auto_save_data?: Json | null
           completed_at?: string | null
           created_at?: string | null
+          cycle_number?: number | null
           due_date?: string | null
           feedback?: Json | null
           id?: string
+          is_locked?: boolean | null
+          last_activity?: string | null
+          next_available_date?: string | null
           notes?: string | null
           progress?: number | null
+          review_count?: number | null
           session_id?: string | null
           started_at?: string | null
           status?: string | null
+          tools_data?: Json | null
           updated_at?: string | null
           user_id?: string | null
         }
@@ -1547,9 +1769,22 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      approve_goal: {
+        Args: { goal_id: string; admin_user_id: string; admin_notes?: string }
+        Returns: boolean
+      }
       calculate_heart_rate_zones: {
         Args: { age: number; resting_hr?: number }
         Returns: Json
+      }
+      reject_goal: {
+        Args: {
+          goal_id: string
+          admin_user_id: string
+          rejection_reason: string
+          admin_notes?: string
+        }
+        Returns: boolean
       }
       sync_device_data: {
         Args: {

@@ -21,7 +21,10 @@ import {
   EyeOff,
   Zap,
   Brain,
-  TestTube
+  TestTube,
+  Utensils,
+  Target,
+  Heart
 } from 'lucide-react';
 import GPTTestPanel from './GPTTestPanel';
 
@@ -34,11 +37,14 @@ interface AIConfig {
 }
 
 interface AIConfigurations {
-  dailyChat: AIConfig;
-  emailReports: AIConfig;
-  weeklyAnalysis: AIConfig;
-  medicalAnalysis: AIConfig;
-  generalAssistant: AIConfig;
+  chat_daily: AIConfig;
+  weekly_report: AIConfig;
+  monthly_report: AIConfig;
+  medical_analysis: AIConfig;
+  preventive_analysis: AIConfig;
+  food_analysis: AIConfig;
+  health_chat: AIConfig;
+  goal_analysis: AIConfig;
 }
 
 const AIConfiguration: React.FC = () => {
@@ -52,39 +58,60 @@ const AIConfiguration: React.FC = () => {
   });
   
   const [configurations, setConfigurations] = useState<AIConfigurations>({
-    dailyChat: {
+    chat_daily: {
       service: 'openai',
-      model: 'gpt-4o',
+      model: 'gpt-4o-mini',
       temperature: 0.8,
-      maxTokens: 1000,
+      maxTokens: 2048,
       isEnabled: true
     },
-    emailReports: {
+    weekly_report: {
       service: 'openai',
       model: 'gpt-4o',
       temperature: 0.7,
-      maxTokens: 2000,
+      maxTokens: 4096,
       isEnabled: true
     },
-    weeklyAnalysis: {
+    monthly_report: {
       service: 'openai',
       model: 'gpt-4o',
       temperature: 0.6,
-      maxTokens: 2500,
+      maxTokens: 4096,
       isEnabled: true
     },
-    medicalAnalysis: {
-      service: 'openai',
-      model: 'o3-2025-04-16',
-      temperature: 0.3,
-      maxTokens: 3000,
-      isEnabled: true
-    },
-    generalAssistant: {
+    medical_analysis: {
       service: 'openai',
       model: 'gpt-4o',
+      temperature: 0.3,
+      maxTokens: 4096,
+      isEnabled: true
+    },
+    preventive_analysis: {
+      service: 'openai',
+      model: 'gpt-4o',
+      temperature: 0.5,
+      maxTokens: 4096,
+      isEnabled: true
+    },
+    food_analysis: {
+      service: 'openai',
+      model: 'gpt-4o',
+      temperature: 0.6,
+      maxTokens: 2048,
+      isEnabled: true
+    },
+    health_chat: {
+      service: 'openai',
+      model: 'gpt-4o-mini',
       temperature: 0.8,
-      maxTokens: 2000,
+      maxTokens: 2048,
+      isEnabled: true
+    },
+    goal_analysis: {
+      service: 'openai',
+      model: 'gpt-4o-mini',
+      temperature: 0.7,
+      maxTokens: 2048,
       isEnabled: true
     }
   });
@@ -95,11 +122,11 @@ const AIConfiguration: React.FC = () => {
   ];
 
   const openaiModels = [
-    { value: 'gpt-4.1-2025-04-14', label: 'GPT-4.1 (Mais Recente e Poderoso)' },
+    { value: 'gpt-4o', label: 'GPT-4o (Visão e Texto - Mais Poderoso)' },
+    { value: 'gpt-4o-mini', label: 'GPT-4o Mini (Rápido e Eficiente)' },
+    { value: 'gpt-4.1-2025-04-14', label: 'GPT-4.1 (Mais Recente)' },
     { value: 'o3-2025-04-16', label: 'O3 (Raciocínio Avançado)' },
     { value: 'o4-mini-2025-04-16', label: 'O4 Mini (Raciocínio Rápido)' },
-    { value: 'gpt-4o', label: 'GPT-4o (Visão e Texto)' },
-    { value: 'gpt-4o-mini', label: 'GPT-4o Mini (Rápido)' },
     { value: 'gpt-4-turbo', label: 'GPT-4 Turbo (Balanceado)' },
     { value: 'gpt-3.5-turbo', label: 'GPT-3.5 Turbo (Econômico)' }
   ];
@@ -111,34 +138,52 @@ const AIConfiguration: React.FC = () => {
 
   const configurationItems = [
     {
-      key: 'dailyChat' as keyof AIConfigurations,
+      key: 'chat_daily' as keyof AIConfigurations,
       title: 'Chat Diário',
       description: 'Conversas diárias com Sof.ia e Dr. Vita',
       icon: <MessageSquare className="h-5 w-5" />
     },
     {
-      key: 'emailReports' as keyof AIConfigurations,
-      title: 'Relatórios por Email',
+      key: 'weekly_report' as keyof AIConfigurations,
+      title: 'Relatório Semanal',
       description: 'Geração de relatórios semanais por email',
       icon: <Mail className="h-5 w-5" />
     },
     {
-      key: 'weeklyAnalysis' as keyof AIConfigurations,
-      title: 'Análise Semanal',
-      description: 'Insights semanais do chat emocional',
+      key: 'monthly_report' as keyof AIConfigurations,
+      title: 'Relatório Mensal',
+      description: 'Análises mensais detalhadas',
       icon: <BarChart3 className="h-5 w-5" />
     },
     {
-      key: 'medicalAnalysis' as keyof AIConfigurations,
+      key: 'medical_analysis' as keyof AIConfigurations,
       title: 'Análise Médica',
       description: 'Análise de exames e dados de saúde',
       icon: <FileText className="h-5 w-5" />
     },
     {
-      key: 'generalAssistant' as keyof AIConfigurations,
-      title: 'Assistente Geral',
-      description: 'Outras funcionalidades de IA',
-      icon: <Bot className="h-5 w-5" />
+      key: 'preventive_analysis' as keyof AIConfigurations,
+      title: 'Análise Preventiva',
+      description: 'Análises preventivas de saúde',
+      icon: <TestTube className="h-5 w-5" />
+    },
+    {
+      key: 'food_analysis' as keyof AIConfigurations,
+      title: 'Análise de Alimentos',
+      description: 'Análise de imagens de alimentos',
+      icon: <Utensils className="h-5 w-5" />
+    },
+    {
+      key: 'health_chat' as keyof AIConfigurations,
+      title: 'Chat de Saúde',
+      description: 'Chat especializado em saúde',
+      icon: <Heart className="h-5 w-5" />
+    },
+    {
+      key: 'goal_analysis' as keyof AIConfigurations,
+      title: 'Análise de Metas',
+      description: 'Análise e acompanhamento de metas',
+      icon: <Target className="h-5 w-5" />
     }
   ];
 

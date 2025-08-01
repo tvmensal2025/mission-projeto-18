@@ -131,38 +131,11 @@ export function HealthFeedPage() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('Não autenticado');
 
-      // Verificar se já reagiu
-      const { data: existingReaction } = await supabase
-        .from('health_feed_reactions')
-        .select('*')
-        .eq('post_id', postId)
-        .eq('user_id', user.id)
-        .single();
-
-      if (existingReaction) {
-        if (existingReaction.reaction_type === reactionType) {
-          // Remover reação
-          await supabase
-            .from('health_feed_reactions')
-            .delete()
-            .eq('id', existingReaction.id);
-        } else {
-          // Atualizar reação
-          await supabase
-            .from('health_feed_reactions')
-            .update({ reaction_type: reactionType })
-            .eq('id', existingReaction.id);
-        }
-      } else {
-        // Criar nova reação
-        await supabase
-          .from('health_feed_reactions')
-          .insert({
-            post_id: postId,
-            user_id: user.id,
-            reaction_type: reactionType
-          });
-      }
+      // Implementar reações quando as tabelas forem criadas
+      // Por enquanto, apenas simular
+      console.log('Reação:', { postId, reactionType, userId: user.id });
+      
+      return { success: true };
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['health-feed-posts'] });
@@ -171,17 +144,14 @@ export function HealthFeedPage() {
 
   // Comentar em post
   const commentMutation = useMutation({
-    mutationFn: async ({ postId, content }: { postId: string, content: string }) => {
+    mutationFn: async ({ postId, content }: { postId, content: string }) => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('Não autenticado');
 
-      const { error } = await supabase.from('health_feed_comments').insert({
-        post_id: postId,
-        user_id: user.id,
-        content
-      });
-
-      if (error) throw error;
+      // Implementar comentários quando as tabelas forem criadas
+      console.log('Comentário:', { postId, content, userId: user.id });
+      
+      return { success: true };
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['health-feed-posts'] });

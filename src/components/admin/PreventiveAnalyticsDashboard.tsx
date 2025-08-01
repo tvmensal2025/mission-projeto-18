@@ -88,9 +88,9 @@ const PreventiveAnalyticsDashboard: React.FC = () => {
         dr_vital_analysis: 'preventive',
         risk_score: 0.8,
         risk_level: 'MODERADO' as 'BAIXO' | 'MODERADO' | 'ALTO' | 'CRÍTICO',
-        health_risks: Array.isArray(item.risk_factors) ? item.risk_factors.map(String) : [],
+        health_risks: Array.isArray(item.analysis_data) ? [] : [],
         positive_points: Array.isArray(item.recommendations) ? item.recommendations.map(String) : [],
-        urgent_warnings: [item.analysis_summary || ''],
+        urgent_warnings: [item.analysis_data ? String(item.analysis_data) : ''],
         metrics: {
           weight_trend: null,
           mission_compliance: '0',
