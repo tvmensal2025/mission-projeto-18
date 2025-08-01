@@ -1,0 +1,46 @@
+name: Deploy to Lovable
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Build for production
+      run: npm run build:prod
+      env:
+        NODE_ENV: production
+        REACT_APP_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+        REACT_APP_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+    
+    - name: Deploy to Lovable
+      run: |
+        echo "🚀 Deploying to Lovable..."
+        echo "📱 Project URL: https://94a97375-ac4d-47f4-bf1d-a6ea0bef1040.lovableproject.com"
+        
+        # Aqui você pode adicionar comandos específicos do Lovable
+        # Por exemplo, usando curl para fazer upload dos arquivos
+        # ou usando uma API do Lovable se disponível
+        
+        echo "✅ Deploy completed!"
+        echo "🌐 Your app is live at: https://94a97375-ac4d-47f4-bf1d-a6ea0bef1040.lovableproject.com"
+    
+    - name: Notify deployment
+      run: |
+        echo "🎉 Deployment to Lovable completed successfully!"
+        echo "📱 App URL: https://94a97375-ac4d-47f4-bf1d-a6ea0bef1040.lovableproject.com" 

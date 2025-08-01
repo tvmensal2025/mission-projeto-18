@@ -11,10 +11,8 @@ Crie um arquivo `.env` na raiz do projeto com as seguintes variáveis:
 ```env
 # Asaas Configuration
 VITE_ASAAS_API_KEY=your_production_api_key_here
-VITE_ASAAS_SANDBOX_API_KEY=your_sandbox_api_key_here
-VITE_ASAAS_BASE_URL=https://sandbox.asaas.com/api/v3
+VITE_ASAAS_BASE_URL=https://api.asaas.com/v3
 VITE_ASAAS_WEBHOOK_URL=https://your-domain.com/api/asaas-webhook
-VITE_ASAAS_SANDBOX=true
 VITE_ENABLE_ASAAS_PAYMENTS=true
 ```
 
@@ -23,7 +21,7 @@ VITE_ENABLE_ASAAS_PAYMENTS=true
 1. Acesse o [painel da Asaas](https://www.asaas.com/)
 2. Crie uma conta ou faça login
 3. Vá para **Configurações > API**
-4. Copie as chaves de API para produção e sandbox
+4. Copie a chave de API de produção
 
 ### 3. Configurar Webhook (Opcional)
 
@@ -51,7 +49,7 @@ O hook `useAsaasPayments` fornece:
 
 - **Estado**: `status`, `currentCustomer`, `currentPayment`, `currentSubscription`
 - **Ações**: `createCustomer`, `createPayment`, `createSubscription`, etc.
-- **Utilitários**: `isEnabled`, `isSandbox`, `clearData`
+- **Utilitários**: `isEnabled`, `clearData`
 
 ### Componente de Gestão (`src/components/payments/PaymentManager.tsx`)
 
@@ -151,12 +149,9 @@ function MyComponent() {
 - **OVERDUE**: Vencida
 - **CANCELLED**: Cancelada
 
-## Ambiente Sandbox vs Produção
+## Ambiente de Produção
 
-- **Sandbox**: Para testes e desenvolvimento
-- **Produção**: Para uso real
-
-Configure `VITE_ASAAS_SANDBOX=true` para usar o ambiente de testes.
+A integração está configurada para usar apenas o ambiente de produção da Asaas.
 
 ## Segurança
 
