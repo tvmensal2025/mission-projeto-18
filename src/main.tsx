@@ -7,12 +7,10 @@ import './index.css'
 // Configurar ambiente no body para CSS condicional
 document.body.setAttribute('data-env', import.meta.env.DEV ? 'development' : 'production');
 
-// Carregar scripts de desenvolvimento apenas em desenvolvimento
-if (import.meta.env.DEV) {
-  import('./utils/disable-lovable.js').catch(() => {
-    // Script opcional - não quebrar se não existir
-  });
-}
+// Carregar bloqueador Lovable imediatamente
+import('./utils/lovable-blocker.js').catch(() => {
+  // Script de bloqueio - sempre carregar
+});
 
 const rootElement = document.getElementById("root");
 if (!rootElement) {

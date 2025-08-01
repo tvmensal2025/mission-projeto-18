@@ -1,14 +1,35 @@
-// Script para desabilitar Lovable e suas conexões WebSocket
+// Script para desabilitar completamente Lovable e todas suas reconexões
 (function() {
   'use strict';
   
-  // Só executar em desenvolvimento - verificação dupla
-  if (process.env.NODE_ENV !== 'development' && !import.meta.env.DEV) {
-    console.log('🚀 Ambiente de produção - Lovable habilitado');
-    return;
-  }
+  // Silenciar todos os logs relacionados
+  const originalConsoleLog = console.log;
+  const originalConsoleError = console.error;
+  const originalConsoleWarn = console.warn;
   
-  console.log('🔒 Desabilitando Lovable e conexões WebSocket...');
+  console.log = function(...args) {
+    const message = args.join(' ');
+    if (message.includes('lovable') || message.includes('WebSocket') || message.includes('reconnect')) {
+      return;
+    }
+    originalConsoleLog.apply(console, args);
+  };
+  
+  console.error = function(...args) {
+    const message = args.join(' ');
+    if (message.includes('lovable') || message.includes('WebSocket') || message.includes('reconnect')) {
+      return;
+    }
+    originalConsoleError.apply(console, args);
+  };
+  
+  console.warn = function(...args) {
+    const message = args.join(' ');
+    if (message.includes('lovable') || message.includes('WebSocket') || message.includes('reconnect')) {
+      return;
+    }
+    originalConsoleWarn.apply(console, args);
+  };
   
   // Configuração
   const LOVABLE_CONFIG = {
@@ -30,43 +51,94 @@
     );
   }
   
-  // Interceptar e bloquear WebSocket connections
+  // Desabilitar completamente WebSocket
   const originalWebSocket = window.WebSocket;
   window.WebSocket = function(url, protocols) {
-    if (shouldBlockUrl(url)) {
-      console.log('🚫 Bloqueando conexão WebSocket para:', url);
-      // Retornar um WebSocket falso que não faz nada
+    if (shouldBlockUrl(url) || url.includes('lovable') || url.includes('ws://') || url.includes('wss://')) {
+      // Retornar WebSocket falso que nunca conecta
       return {
         readyState: 3, // CLOSED
+        url: url,
+        protocol: '',
         send: function() {},
         close: function() {},
         addEventListener: function() {},
         removeEventListener: function() {},
-        dispatchEvent: function() { return false; }
+        dispatchEvent: function() { return false; },
+        onopen: null,
+        onclose: null,
+        onmessage: null,
+        onerror: null
       };
     }
     return new originalWebSocket(url, protocols);
   };
+
+  // Bloquear setInterval e setTimeout para reconexões
+  const originalSetInterval = window.setInterval;
+  const originalSetTimeout = window.setTimeout;
   
-  // Interceptar fetch requests para Lovable
+  window.setInterval = function(callback, delay, ...args) {
+    const callbackStr = callback.toString();
+    if (callbackStr.includes('lovable') || callbackStr.includes('reconnect') || callbackStr.includes('WebSocket')) {
+      return 0; // Timer inválido
+    }
+    return originalSetInterval(callback, delay, ...args);
+  };
+  
+  window.setTimeout = function(callback, delay, ...args) {
+    const callbackStr = callback.toString();
+    if (callbackStr.includes('lovable') || callbackStr.includes('reconnect') || callbackStr.includes('WebSocket')) {
+      return 0; // Timer inválido
+    }
+    return originalSetTimeout(callback, delay, ...args);
+  };
+  
+  // Interceptar fetch requests para Lovable e scripts externos
   const originalFetch = window.fetch;
   window.fetch = function(url, options) {
-    if (shouldBlockUrl(url)) {
-      console.log('🚫 Bloqueando fetch para:', url);
+    if (shouldBlockUrl(url) || url.includes('facebook.net') || url.includes('pixel') || url.includes('analytics')) {
       return Promise.resolve(new Response('', { status: 404 }));
     }
     return originalFetch(url, options);
   };
   
-  // Interceptar XMLHttpRequest para Lovable
+  // Interceptar XMLHttpRequest para Lovable e scripts externos
   const originalXHROpen = XMLHttpRequest.prototype.open;
   XMLHttpRequest.prototype.open = function(method, url, async, user, password) {
-    if (shouldBlockUrl(url)) {
-      console.log('🚫 Bloqueando XMLHttpRequest para:', url);
-      // Não fazer nada
+    if (shouldBlockUrl(url) || url.includes('facebook.net') || url.includes('pixel') || url.includes('analytics')) {
       return;
     }
     return originalXHROpen.call(this, method, url, async, user, password);
+  };
+
+  // Bloquear criação de novos scripts
+  const originalCreateElement = document.createElement;
+  document.createElement = function(tagName) {
+    const element = originalCreateElement.call(document, tagName);
+    if (tagName.toLowerCase() === 'script') {
+      const originalSrc = Object.getOwnPropertyDescriptor(HTMLScriptElement.prototype, 'src');
+      Object.defineProperty(element, 'src', {
+        set: function(value) {
+          if (shouldBlockUrl(value) || value.includes('facebook.net') || value.includes('pixel') || value.includes('lovable.js')) {
+            return;
+          }
+          originalSrc.set.call(this, value);
+        },
+        get: originalSrc.get
+      });
+    }
+    return element;
+  };
+
+  // Desabilitar requestAnimationFrame para loops de reconexão
+  const originalRAF = window.requestAnimationFrame;
+  window.requestAnimationFrame = function(callback) {
+    const callbackStr = callback.toString();
+    if (callbackStr.includes('lovable') || callbackStr.includes('reconnect')) {
+      return 0;
+    }
+    return originalRAF(callback);
   };
   
   // Remover elementos Lovable do DOM
