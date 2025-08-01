@@ -112,7 +112,7 @@ const GoogleFitTestPage = () => {
     localStorage.removeItem('google_fit_refresh_token');
     localStorage.removeItem('google_fit_auth_state');
     
-    const redirectUri = window.location.origin + '/google-fit-callback';
+    const redirectUri = 'https://eb451b44-5d36-4bf7-8628-481a619af74a.lovableproject.com/google-fit-callback';
     
     const scopes = [
       'https://www.googleapis.com/auth/fitness.activity.read',
@@ -358,7 +358,7 @@ const GoogleFitTestPage = () => {
                 <p><strong>Host:</strong> {window.location.hostname}</p>
                 <p><strong>Client ID:</strong> 705908448787-n6pu6jsbr97d23no0vqhkqqaepf5unsm.apps.googleusercontent.com</p>
                 <p><strong>Redirect URI (Local):</strong> http://localhost:3000/google-fit-callback</p>
-                <p><strong>Redirect URI (Produção):</strong> {window.location.origin}/google-fit-callback</p>
+                <p><strong>Redirect URI (Produção):</strong> https://eb451b44-5d36-4bf7-8628-481a619af74a.lovableproject.com/google-fit-callback</p>
                 
                 {/* Mostrar tokens atuais */}
                 <div className="mt-4 p-3 bg-muted rounded">
@@ -375,7 +375,7 @@ const GoogleFitTestPage = () => {
                       const isLocalhost = window.location.hostname === 'localhost';
                       const redirectUri = isLocalhost 
                         ? 'http://localhost:3000/google-fit-callback'
-          : window.location.origin + '/google-fit-callback';
+                        : 'https://eb451b44-5d36-4bf7-8628-481a619af74a.lovableproject.com/google-fit-callback';
                       
                       const scopes = [
                         'https://www.googleapis.com/auth/fitness.activity.read',

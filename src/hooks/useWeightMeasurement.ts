@@ -66,59 +66,28 @@ export const useWeightMeasurement = () => {
 
       console.log('Buscando dados físicos para usuário:', user.id);
       
-      // Buscar dados na tabela profiles (nova abordagem)
-      const { data: profileData, error: profileError } = await supabase
-        .from('profiles')
-        .select('altura_cm, data_nascimento, birth_date, gender')
+      const { data, error } = await supabase
+        .from('user_physical_data')
+        .select('*')
         .eq('user_id', user.id)
         .single();
 
-      if (profileError) {
-        if (profileError.code === 'PGRST116') {
-          console.log('Usuário não possui perfil cadastrado');
+      if (error) {
+        if (error.code === 'PGRST116') {
+          console.log('Usuário não possui dados físicos cadastrados');
           setPhysicalData(null);
           return;
         }
-        throw profileError;
+        throw error;
       }
       
-      // Converter dados do profile para o formato esperado
-      if (profileData) {
-        const physicalData = {
-          id: profileData.id || '',
-          user_id: user.id,
-          altura_cm: profileData.altura_cm || 0,
-          idade: calculateAge(profileData.data_nascimento || profileData.birth_date),
-          sexo: profileData.gender === 'male' ? 'masculino' : profileData.gender === 'female' ? 'feminino' : 'neutro',
-          nivel_atividade: 'moderado', // valor padrão
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        };
-        
-        console.log('Dados físicos encontrados (convertidos):', physicalData);
-        setPhysicalData(physicalData);
-      }
+      console.log('Dados físicos encontrados:', data);
+      setPhysicalData(data);
     } catch (err: any) {
       console.error('Erro ao buscar dados físicos:', err);
       setError(err.message);
     }
   }, []);
-
-  // Função para calcular idade
-  const calculateAge = (birthDate: string | null): number => {
-    if (!birthDate) return 30; // idade padrão
-    
-    const today = new Date();
-    const birth = new Date(birthDate);
-    let age = today.getFullYear() - birth.getFullYear();
-    const monthDiff = today.getMonth() - birth.getMonth();
-    
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
-      age--;
-    }
-    
-    return age;
-  };
 
   // Salvar dados físicos do usuário
   const savePhysicalData = async (data: Omit<UserPhysicalData, 'id' | 'user_id' | 'created_at' | 'updated_at'>) => {

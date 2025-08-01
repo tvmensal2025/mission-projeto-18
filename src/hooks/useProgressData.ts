@@ -50,7 +50,7 @@ export function useProgressData() {
         if (!user) throw new Error('Usuário não autenticado');
 
         const { data: physicalData, error: physicalError } = await supabase
-          .from('profiles')
+          .from('user_physical_data')
           .select('altura_cm')
           .eq('user_id', user.id)
           .single();

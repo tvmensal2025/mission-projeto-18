@@ -55,7 +55,7 @@ const UserManagement: React.FC = () => {
       // Buscar usuários da tabela profiles
       const { data: profiles, error: profilesError } = await supabase
         .from('profiles')
-        .select('user_id, full_name, email, created_at');
+        .select('id, full_name, email, created_at');
       
       // A tabela user_profiles foi unificada com profiles
 
@@ -95,7 +95,7 @@ const UserManagement: React.FC = () => {
 
       // Processar perfis da tabela profiles
       profiles?.forEach(profile => {
-        userStats.set(profile.user_id, {
+        userStats.set(profile.id, {
           measurements: 0,
           weights: [],
           lastActivity: profile.created_at,

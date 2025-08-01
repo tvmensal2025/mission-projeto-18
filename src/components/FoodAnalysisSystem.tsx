@@ -83,13 +83,6 @@ interface SofiaAnalysis {
   mood: string;
   energy: string;
   nextMeal: string;
-  emotionalInsights?: string[];
-  habitAnalysis?: string[];
-  motivationalMessage?: string;
-  calorieAnalysis?: string;
-  nutrientBreakdown?: string;
-  portionGuidance?: string;
-  healthBenefits?: string[];
 }
 
 export const FoodAnalysisSystem: React.FC = () => {
@@ -393,9 +386,9 @@ export const FoodAnalysisSystem: React.FC = () => {
                   {/* Resultados da busca */}
                   {showSearchResults && searchResults.length > 0 && (
                     <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-y-auto">
-                                        {searchResults.map((food) => (
-                    <div
-                      key={`search-food-${food.id}`}
+                      {searchResults.map((food) => (
+                        <div
+                          key={food.id}
                           className="px-3 py-2 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0"
                           onClick={() => {
                             addFoodItem(food.name);
@@ -423,9 +416,9 @@ export const FoodAnalysisSystem: React.FC = () => {
               <div>
                 <label className="text-sm font-medium">Categorias</label>
                 <div className="grid grid-cols-2 gap-2 mt-2">
-                                  {foodCategories.map(category => (
-                  <Button
-                    key={`category-${category.name}`}
+                  {foodCategories.map(category => (
+                    <Button
+                      key={category.name}
                       variant="outline"
                       size="sm"
                       onClick={() => addFoodItem(category.name.toLowerCase())}
@@ -478,8 +471,8 @@ export const FoodAnalysisSystem: React.FC = () => {
             <CardContent>
               <ScrollArea className="h-64">
                 <div className="space-y-2">
-                                {foodItems.map(item => (
-                <div key={`food-item-${item.id}`} className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                  {foodItems.map(item => (
+                    <div key={item.id} className="flex items-center justify-between p-2 bg-gray-50 rounded">
                       <div className="flex items-center space-x-2">
                         <Badge variant="secondary">{item.category}</Badge>
                         <span className="font-medium">{item.name}</span>
@@ -614,57 +607,6 @@ export const FoodAnalysisSystem: React.FC = () => {
                     <p className="text-sm text-purple-800">{sofiaAnalysis.analysis}</p>
                   </div>
 
-                  {/* Análise de Calorias */}
-                  {sofiaAnalysis.calorieAnalysis && (
-                    <div className="p-3 bg-orange-50 rounded">
-                      <h4 className="font-medium mb-2 flex items-center">
-                        <Zap className="w-4 h-4 mr-1 text-orange-600" />
-                        Análise de Calorias
-                      </h4>
-                      <p className="text-sm text-orange-800">{sofiaAnalysis.calorieAnalysis}</p>
-                    </div>
-                  )}
-
-                  {/* Detalhamento de Nutrientes */}
-                  {sofiaAnalysis.nutrientBreakdown && (
-                    <div className="p-3 bg-blue-50 rounded">
-                      <h4 className="font-medium mb-2 flex items-center">
-                        <Target className="w-4 h-4 mr-1 text-blue-600" />
-                        Detalhamento de Nutrientes
-                      </h4>
-                      <p className="text-sm text-blue-800">{sofiaAnalysis.nutrientBreakdown}</p>
-                    </div>
-                  )}
-
-                  {/* Orientação sobre Porções */}
-                  {sofiaAnalysis.portionGuidance && (
-                    <div className="p-3 bg-green-50 rounded">
-                      <h4 className="font-medium mb-2 flex items-center">
-                        <Activity className="w-4 h-4 mr-1 text-green-600" />
-                        Orientação sobre Porções
-                      </h4>
-                      <p className="text-sm text-green-800">{sofiaAnalysis.portionGuidance}</p>
-                    </div>
-                  )}
-
-                  {/* Benefícios para Saúde */}
-                  {sofiaAnalysis.healthBenefits && sofiaAnalysis.healthBenefits.length > 0 && (
-                    <div>
-                      <h4 className="font-medium mb-2 flex items-center">
-                        <Heart className="w-4 h-4 mr-1 text-pink-600" />
-                        Benefícios para Saúde
-                      </h4>
-                      <ul className="space-y-1 text-sm">
-                                        {sofiaAnalysis.healthBenefits.map((benefit, index) => (
-                  <li key={`health-benefit-${index}`} className="flex items-start">
-                            <span className="text-pink-600 mr-2">•</span>
-                            {benefit}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-
                   {/* Recomendações */}
                   {sofiaAnalysis.recommendations.length > 0 && (
                     <div>
@@ -673,8 +615,8 @@ export const FoodAnalysisSystem: React.FC = () => {
                         Recomendações
                       </h4>
                       <ul className="space-y-1 text-sm">
-                                        {sofiaAnalysis.recommendations.map((rec, index) => (
-                  <li key={`recommendation-${index}`} className="flex items-start">
+                        {sofiaAnalysis.recommendations.map((rec, index) => (
+                          <li key={index} className="flex items-start">
                             <span className="text-green-600 mr-2">•</span>
                             {rec}
                           </li>
@@ -683,50 +625,21 @@ export const FoodAnalysisSystem: React.FC = () => {
                     </div>
                   )}
 
-                  {/* Insights Emocionais */}
-                  {sofiaAnalysis.emotionalInsights && sofiaAnalysis.emotionalInsights.length > 0 && (
+                  {/* Insights */}
+                  {analysis?.insights && analysis.insights.length > 0 && (
                     <div>
                       <h4 className="font-medium mb-2 flex items-center">
-                        <Brain className="w-4 h-4 mr-1 text-purple-600" />
-                        Insights Emocionais
+                        <Heart className="w-4 h-4 mr-1 text-pink-600" />
+                        Pontos Positivos
                       </h4>
                       <ul className="space-y-1 text-sm">
-                                        {sofiaAnalysis.emotionalInsights.map((insight, index) => (
-                  <li key={`emotional-insight-${index}`} className="flex items-start">
-                            <span className="text-purple-600 mr-2">•</span>
+                        {analysis.insights.map((insight, index) => (
+                          <li key={index} className="flex items-start">
+                            <span className="text-pink-600 mr-2">•</span>
                             {insight}
                           </li>
                         ))}
                       </ul>
-                    </div>
-                  )}
-
-                  {/* Análise de Hábitos */}
-                  {sofiaAnalysis.habitAnalysis && sofiaAnalysis.habitAnalysis.length > 0 && (
-                    <div>
-                      <h4 className="font-medium mb-2 flex items-center">
-                        <TrendingUp className="w-4 h-4 mr-1 text-blue-600" />
-                        Análise de Hábitos
-                      </h4>
-                      <ul className="space-y-1 text-sm">
-                                        {sofiaAnalysis.habitAnalysis.map((habit, index) => (
-                  <li key={`habit-analysis-${index}`} className="flex items-start">
-                            <span className="text-blue-600 mr-2">•</span>
-                            {habit}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-
-                  {/* Mensagem Motivacional */}
-                  {sofiaAnalysis.motivationalMessage && (
-                    <div className="p-3 bg-gradient-to-r from-purple-50 to-pink-50 rounded border-l-4 border-purple-400">
-                      <h4 className="font-medium mb-1 flex items-center">
-                        <Heart className="w-4 h-4 mr-1 text-purple-600" />
-                        Mensagem da Sofia
-                      </h4>
-                      <p className="text-sm text-purple-800 italic">"{sofiaAnalysis.motivationalMessage}"</p>
                     </div>
                   )}
 

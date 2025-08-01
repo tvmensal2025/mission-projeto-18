@@ -102,6 +102,8 @@ const DashboardPage = () => {
         {/* Community Button */}
         <CommunityButton />
 
+        {/* Anamnesis Notification */}
+        
 
         {/* Welcome Card - Responsivo */}
         <Card className="health-card mb-6 sm:mb-8">

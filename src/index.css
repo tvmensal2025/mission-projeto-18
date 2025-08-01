@@ -346,33 +346,12 @@
   @apply grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6;
 }
 
-/* Hide Lovable elements only in development */
-@media screen {
-  body[data-env="development"] a[href*="lovable.dev"], 
-  body[data-env="development"] iframe[src*="lovable.dev"], 
-  body[data-env="development"] div[style*="Edit with Lovable"], 
-  body[data-env="development"] .lovable-badge,
-  body[data-env="development"] [data-lovable],
-  body[data-env="development"] [class*="lovable"],
-  body[data-env="development"] [data-testid*="lovable"],
-  body[data-env="development"] iframe[src*="lovableproject.com"],
-  body[data-env="development"] script[src*="lovable"],
-  body[data-env="development"] link[href*="lovable"] {
-    display: none !important;
-    visibility: hidden !important;
-    opacity: 0 !important;
-    pointer-events: none !important;
-  }
-
-  /* Prevent any Lovable-related scripts from loading in development */
-  body[data-env="development"] script[src*="lovable"] {
-    display: none !important;
-  }
-
-  /* Hide any Lovable overlays or popups in development */
-  body[data-env="development"] div[style*="lovable"],
-  body[data-env="development"] div[class*="lovable"],
-  body[data-env="development"] div[id*="lovable"] {
-    display: none !important;
-  }
+/* Hide Lovable elements */
+a[href*="lovable.dev"], iframe[src*="lovable.dev"], div[style*="Edit with Lovable"], .lovable-badge {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  position: absolute !important;
+  z-index: -9999 !important;
 }
