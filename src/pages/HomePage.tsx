@@ -4,43 +4,29 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { 
-  Heart, 
-  Activity, 
-  Target, 
-  TrendingUp, 
-  Users, 
-  Award,
-  ChevronRight,
-  Play,
-  Star,
-  Calendar,
-  BarChart3,
-  Zap,
-  ArrowRight,
-  User
-} from "lucide-react";
-
+import { Heart, Activity, Target, TrendingUp, Users, Award, ChevronRight, Play, Star, Calendar, BarChart3, Zap, ArrowRight, User } from "lucide-react";
 const HomePage = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(({
+      data: {
+        session
+      }
+    }) => {
       setUser(session?.user ?? null);
       setLoading(false);
     });
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        setUser(session?.user ?? null);
+    const {
+      data: {
+        subscription
       }
-    );
-
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      setUser(session?.user ?? null);
+    });
     return () => subscription.unsubscribe();
   }, []);
-
   const handleGetStarted = () => {
     if (user) {
       navigate("/dashboard");
@@ -48,65 +34,63 @@ const HomePage = () => {
       navigate("/auth");
     }
   };
-
-  const features = [
-    {
-      icon: Activity,
-      title: "Missões Diárias",
-      description: "Desenvolva hábitos saudáveis com missões personalizadas",
-      color: "text-primary",
-      bgColor: "bg-primary/10"
-    },
-    {
-      icon: TrendingUp,
-      title: "Análise de Progresso",
-      description: "Acompanhe sua evolução com gráficos detalhados",
-      color: "text-secondary",
-      bgColor: "bg-secondary/10"
-    },
-    {
-      icon: Users,
-      title: "Comunidade",
-      description: "Conecte-se com outros usuários e mantenha a motivação",
-      color: "text-health-steps",
-      bgColor: "bg-blue-500/10"
-    },
-    {
-      icon: Award,
-      title: "Sistema de Ranking",
-      description: "Compete com amigos e alcance novos níveis",
-      color: "text-yellow-500",
-      bgColor: "bg-yellow-500/10"
-    },
-    {
-      icon: Target,
-      title: "Metas Personalizadas",
-      description: "Defina objetivos específicos e alcance seus sonhos",
-      color: "text-green-500",
-      bgColor: "bg-green-500/10"
-    }
-  ];
-
-  const stats = [
-    { label: "Profissionais", value: "15+", icon: Users },
-    { label: "Especialidades", value: "8", icon: Target },
-    { label: "Anos de Experiência", value: "10+", icon: TrendingUp },
-    { label: "Satisfação", value: "100%", icon: Star }
-  ];
-
+  const features = [{
+    icon: Activity,
+    title: "Missões Diárias",
+    description: "Desenvolva hábitos saudáveis com missões personalizadas",
+    color: "text-primary",
+    bgColor: "bg-primary/10"
+  }, {
+    icon: TrendingUp,
+    title: "Análise de Progresso",
+    description: "Acompanhe sua evolução com gráficos detalhados",
+    color: "text-secondary",
+    bgColor: "bg-secondary/10"
+  }, {
+    icon: Users,
+    title: "Comunidade",
+    description: "Conecte-se com outros usuários e mantenha a motivação",
+    color: "text-health-steps",
+    bgColor: "bg-blue-500/10"
+  }, {
+    icon: Award,
+    title: "Sistema de Ranking",
+    description: "Compete com amigos e alcance novos níveis",
+    color: "text-yellow-500",
+    bgColor: "bg-yellow-500/10"
+  }, {
+    icon: Target,
+    title: "Metas Personalizadas",
+    description: "Defina objetivos específicos e alcance seus sonhos",
+    color: "text-green-500",
+    bgColor: "bg-green-500/10"
+  }];
+  const stats = [{
+    label: "Profissionais",
+    value: "15+",
+    icon: Users
+  }, {
+    label: "Especialidades",
+    value: "8",
+    icon: Target
+  }, {
+    label: "Anos de Experiência",
+    value: "10+",
+    icon: TrendingUp
+  }, {
+    label: "Satisfação",
+    value: "100%",
+    icon: Star
+  }];
   if (loading) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+    return <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <Heart className="h-12 w-12 text-primary mx-auto mb-4 animate-pulse" />
           <p className="text-muted-foreground">Carregando...</p>
         </div>
-      </div>
-    );
+      </div>;
   }
-
-  return (
-    <div className="min-h-screen bg-background">
+  return <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="border-b border-border/20 bg-card/50 backdrop-blur-sm">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
@@ -121,8 +105,7 @@ const HomePage = () => {
           </div>
           
           <div className="flex items-center gap-4">
-            {user ? (
-              <div className="flex items-center gap-3">
+            {user ? <div className="flex items-center gap-3">
                 <Button onClick={() => navigate("/dashboard")} variant="default">
                   <BarChart3 className="h-4 w-4 mr-2" />
                   Dashboard
@@ -135,17 +118,14 @@ const HomePage = () => {
                     {user.email?.split("@")[0]}
                   </span>
                 </div>
-              </div>
-            ) : (
-              <div className="flex items-center gap-3">
+              </div> : <div className="flex items-center gap-3">
                 <Button onClick={() => navigate("/auth")} variant="outline">
                   Entrar
                 </Button>
                 <Button onClick={() => navigate("/auth")} variant="default">
                   Começar Agora
                 </Button>
-              </div>
-            )}
+              </div>}
           </div>
         </div>
       </header>
@@ -158,7 +138,7 @@ const HomePage = () => {
               🚀 Sua jornada de transformação começa aqui
             </Badge>
             
-            <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent leading-tight">
+            <h1 className="text-5xl mb-6 bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text leading-tight text-zinc-200 font-extrabold md:text-lg">
               Transforme sua vida com a Health Platform
             </h1>
             
@@ -168,11 +148,7 @@ const HomePage = () => {
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button 
-                onClick={handleGetStarted} 
-                size="lg" 
-                className="text-lg px-8 py-6 bg-gradient-to-r from-primary to-secondary hover:scale-105 transition-transform"
-              >
+              <Button onClick={handleGetStarted} size="lg" className="text-lg px-8 py-6 bg-gradient-to-r from-primary to-secondary hover:scale-105 transition-transform bg-[#d7240f]">
                 <Play className="h-5 w-5 mr-2" />
                 {user ? "Ir para Dashboard" : "Começar Gratuitamente"}
                 <ArrowRight className="h-5 w-5 ml-2" />
@@ -187,15 +163,13 @@ const HomePage = () => {
         <div className="container mx-auto">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {stats.map((stat, index) => {
-              const Icon = stat.icon;
-              return (
-                <div key={index} className="text-center">
+            const Icon = stat.icon;
+            return <div key={index} className="text-center">
                   <Icon className="h-8 w-8 text-primary mx-auto mb-3" />
                   <div className="text-3xl font-bold mb-1">{stat.value}</div>
                   <div className="text-sm text-muted-foreground">{stat.label}</div>
-                </div>
-              );
-            })}
+                </div>;
+          })}
           </div>
         </div>
       </section>
@@ -212,13 +186,8 @@ const HomePage = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {features.map((feature, index) => {
-              const Icon = feature.icon;
-              return (
-                <Card 
-                  key={index} 
-                  className="group hover:scale-105 transition-all duration-300 cursor-pointer border-border/20 hover:border-primary/30 bg-gradient-to-br from-card to-card/50"
-                  onClick={() => user ? navigate("/dashboard") : navigate("/auth")}
-                >
+            const Icon = feature.icon;
+            return <Card key={index} className="group hover:scale-105 transition-all duration-300 cursor-pointer border-border/20 hover:border-primary/30 bg-gradient-to-br from-card to-card/50" onClick={() => user ? navigate("/dashboard") : navigate("/auth")}>
                   <CardHeader>
                     <div className={`w-12 h-12 rounded-lg ${feature.bgColor} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
                       <Icon className={`h-6 w-6 ${feature.color}`} />
@@ -233,9 +202,8 @@ const HomePage = () => {
                     </CardDescription>
                     <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all mt-4" />
                   </CardContent>
-                </Card>
-              );
-            })}
+                </Card>;
+          })}
           </div>
         </div>
       </section>
@@ -251,11 +219,7 @@ const HomePage = () => {
               Comece hoje mesmo, é completamente gratuito!
             </p>
             
-            <Button 
-              onClick={handleGetStarted}
-              size="lg"
-              className="text-lg px-12 py-6 bg-gradient-to-r from-primary to-secondary hover:scale-105 transition-transform"
-            >
+            <Button onClick={handleGetStarted} size="lg" className="text-lg px-12 py-6 bg-gradient-to-r from-primary to-secondary hover:scale-105 transition-transform">
               <Heart className="h-5 w-5 mr-2" />
               {user ? "Voltar ao Dashboard" : "Começar Minha Jornada"}
               <ArrowRight className="h-5 w-5 ml-2" />
@@ -287,8 +251,6 @@ const HomePage = () => {
           </div>
         </div>
       </footer>
-    </div>
-  );
+    </div>;
 };
-
 export default HomePage;
